@@ -143,19 +143,15 @@ class _ProgramarcitaState extends State<Programarcita> {
                 ),
                 DropdownButtonFormField<String>(
                   value: _selectedDoctor,
-                  hint: Text('Seleccione un doctor'),
+                  hint: Text('Doctor encargado'),
                   items: [
                     DropdownMenuItem(
-                      child: Text('Dr. José Martínez'),
-                      value: 'dr_jose',
+                      child: Text('Dra. Natalia Muñoz'),
+                      value: 'dra_natalia',
                     ),
                     DropdownMenuItem(
-                      child: Text('Dra. Ana Gómez'),
-                      value: 'dr_ana',
-                    ),
-                    DropdownMenuItem(
-                      child: Text('Dr. Carlos Rodríguez'),
-                      value: 'dr_carlos',
+                      child: Text('Dr. Oscar Perez'),
+                      value: 'dr_oscar',
                     ),
                   ],
                   onChanged: (value) {

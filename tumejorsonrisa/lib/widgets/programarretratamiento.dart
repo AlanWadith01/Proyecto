@@ -1,19 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-
-
-
+import 'package:http/http.dart' as http;
 
 class ProgramarretraPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ProgramarretraPageState createState() => _ProgramarretraPageState();
 }
 
-class _MyHomePageState extends State<ProgramarretraPage> {
+class _ProgramarretraPageState extends State<ProgramarretraPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _documentoController = TextEditingController();
   final TextEditingController _telefonoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidoController = TextEditingController();
   final TextEditingController _motivoController = TextEditingController();
 
   String? _selectedDoctor;
@@ -46,21 +48,37 @@ class _MyHomePageState extends State<ProgramarretraPage> {
     }
   }
 
-  void _autofillContactInfo(String documento) {
-    // Aquí podrías realizar una búsqueda en tu base de datos para obtener la información
-    // del contacto basado en el número de documento.
-    setState(() {
-      // Ejemplo de autocompletado (reemplaza con tu lógica):
-      _telefonoController.text = '123456789';
-      _emailController.text = 'example@mail.com';
-    });
+  Future<void> _autofillContactInfo(String documento) async {
+    try {
+      final response = await http.get(Uri.parse('http://<tu-ngrok-url>/pacientes/$documento'));
+      if (response.statusCode == 200) {
+        final paciente = json.decode(response.body);
+        setState(() {
+          _nombreController.text = paciente['nombres'];
+          _apellidoController.text = paciente['apellidos'];
+          _telefonoController.text = paciente['telefono'];
+          _emailController.text = paciente['email'];
+        });
+      } else {
+        throw Exception('Error al cargar información del paciente');
+      }
+    } catch (e) {
+      print('Error al autocompletar: $e');
+    }
+  }
+
+  void _searchPatient() {
+    final documento = _documentoController.text;
+    if (documento.isNotEmpty) {
+      _autofillContactInfo(documento);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Programación de Retratamiento'),
+        title: Text('Programación de Citas'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -70,21 +88,43 @@ class _MyHomePageState extends State<ProgramarretraPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _documentoController,
+                        decoration: InputDecoration(
+                          labelText: 'Número de Documento',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingrese el número de documento';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: _searchPatient,
+                      child: Text('Buscar'),
+                    ),
+                  ],
+                ),
                 TextFormField(
-                  controller: _documentoController,
+                  controller: _nombreController,
                   decoration: InputDecoration(
-                    labelText: 'Número de Documento',
+                    labelText: 'Nombre',
                   ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese el número de documento';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    _autofillContactInfo(value);
-                  },
+                  enabled: false,
+                ),
+                TextFormField(
+                  controller: _apellidoController,
+                  decoration: InputDecoration(
+                    labelText: 'Apellido',
+                  ),
+                  enabled: false,
                 ),
                 TextFormField(
                   controller: _telefonoController,
@@ -92,7 +132,7 @@ class _MyHomePageState extends State<ProgramarretraPage> {
                     labelText: 'Número de Teléfono',
                   ),
                   keyboardType: TextInputType.phone,
-                  enabled: false, // Deshabilitado porque se autocompleta
+                  enabled: false,
                 ),
                 TextFormField(
                   controller: _emailController,
@@ -100,23 +140,19 @@ class _MyHomePageState extends State<ProgramarretraPage> {
                     labelText: 'Correo Electrónico',
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  enabled: false, // Deshabilitado porque se autocompleta
+                  enabled: false,
                 ),
                 DropdownButtonFormField<String>(
                   value: _selectedDoctor,
-                  hint: Text('Seleccione un doctor'),
+                  hint: Text('Doctor encargado'),
                   items: [
                     DropdownMenuItem(
-                      child: Text('Dr. José Martínez'),
-                      value: 'dr_jose',
+                      child: Text('Dra. Natalia Muñoz'),
+                      value: 'dra_natalia',
                     ),
                     DropdownMenuItem(
-                      child: Text('Dra. Ana Gómez'),
-                      value: 'dr_ana',
-                    ),
-                    DropdownMenuItem(
-                      child: Text('Dr. Carlos Rodríguez'),
-                      value: 'dr_carlos',
+                      child: Text('Dr. Oscar Perez'),
+                      value: 'dr_oscar',
                     ),
                   ],
                   onChanged: (value) {
@@ -157,12 +193,13 @@ class _MyHomePageState extends State<ProgramarretraPage> {
                     ),
                   ],
                 ),
-                TextFormField(
+                TextField(
                   controller: _motivoController,
                   decoration: InputDecoration(
                     labelText: 'Motivo de la Cita',
+                    border: OutlineInputBorder(),
                   ),
-                  maxLines: 4,
+                  maxLines: 12,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -170,7 +207,6 @@ class _MyHomePageState extends State<ProgramarretraPage> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          // Procesar datos aquí
                         }
                       },
                       child: Text('Programar Cita'),
