@@ -78,7 +78,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Programación de Citas'),
+        title: Text('Programación de Retratamientos'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -196,7 +196,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                 TextField(
                   controller: _motivoController,
                   decoration: InputDecoration(
-                    labelText: 'Motivo de la Cita',
+                    labelText: 'Detalles',
                     border: OutlineInputBorder(),
                   ),
                   maxLines: 12,
@@ -209,7 +209,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                         if (_formKey.currentState!.validate()) {
                         }
                       },
-                      child: Text('Programar Cita'),
+                      child: Text('Programar Retratamiento'),
                     ),
                   ),
                 ),
