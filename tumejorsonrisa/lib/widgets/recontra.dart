@@ -69,6 +69,10 @@ class RecoverPasswordPage extends StatelessWidget {
                                 if (value == null || value.isEmpty) {
                                   return 'Por favor ingresa tu correo electrónico';
                                 }
+                                final emailRegExp = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                                if (!emailRegExp.hasMatch(value)) {
+                                  return 'Por favor ingresa un correo electrónico válido';
+                                }
                                 return null;
                               },
                             ),
