@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tumejorsonrisa/widgets/generarreporte.dart';
+import 'package:tumejorsonrisa/widgets/listapacientes.dart';
 import 'package:tumejorsonrisa/widgets/programarcita.dart';
 import 'package:tumejorsonrisa/widgets/programarretratamiento.dart';
 import 'package:tumejorsonrisa/widgets/registro.dart';
@@ -66,7 +67,8 @@ class HomeScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                   
+                   Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ListaPacientesPage()));
                   },
                   child: Text('Lista de Pacientes'),
                 ),

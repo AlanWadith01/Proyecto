@@ -7,6 +7,10 @@ class RegistroPaciente extends StatefulWidget {
 
 class _RegistroPacienteState extends State<RegistroPaciente> {
   final _formKey = GlobalKey<FormState>();
+
+  // Definición de controladores y variables necesarias
+  final TextEditingController _fechaNacimientoController = TextEditingController();
+
   String? nombre, apellido, numeroDocumento, tipoDocumento, direccion, ciudad, telefono, estadoCivil, sexo, raza, tipoSangre, ocupacion, eps, alergias, cirugias;
   DateTime? fechaNacimiento;
 
@@ -15,6 +19,13 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
   String _emergencyCiudad = '';
   String _emergencyTelefono = '';
   String _emergencyRelacion = '';
+
+  @override
+  void dispose() {
+    // Limpiar los controladores al destruir el widget
+    _fechaNacimientoController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +53,8 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
               _buildDropdown('Tipo de Sangre', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], (value) => tipoSangre = value, true),
               _buildTextField('Ocupación', (value) => ocupacion = value, false),
               _buildTextField('EPS', (value) => eps = value, false),
-              _buildTextArea('Alergias', (value) => alergias = value),
-              _buildTextArea('Cirugías', (value) => cirugias = value),
+              _buildTextField('Alergias', (value) => alergias = value, true),
+              _buildTextField('Cirugías', (value) => cirugias = value, true),
 
               SizedBox(height: 20),
               Text(
@@ -84,7 +95,10 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
 
   Widget _buildTextField(String label, Function(String?) onSaved, bool required, [TextInputType keyboardType = TextInputType.text]) {
     return TextFormField(
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0), // Ajuste de padding
+      ),
       keyboardType: keyboardType,
       onSaved: onSaved,
       validator: (value) {
@@ -99,7 +113,10 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
   Widget _buildDropdown(String label, List<String> items, Function(String?) onChanged, [bool required = false]) {
     String? selectedValue;
     return DropdownButtonFormField<String>(
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0), // Ajuste de padding
+      ),
       value: selectedValue,
       items: items.map((String item) {
         return DropdownMenuItem<String>(
@@ -121,41 +138,43 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
 
   Widget _buildTextArea(String label, Function(String?) onSaved) {
     return TextFormField(
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0), // Ajuste de padding
+      ),
       maxLines: 4,
       onSaved: onSaved,
     );
   }
 
   Widget _buildDatePicker(String label, Function(DateTime?) onSaved, bool required) {
-  DateTime? selectedDate;
-  return GestureDetector(
-    onTap: () async {
-      DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now(),
-      );
-      if (pickedDate != null) {
-        setState(() {
-          selectedDate = pickedDate;
-        });
-        onSaved(pickedDate);
-      }
-    },
-    child: AbsorbPointer(
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: label, 
-          hintText: selectedDate != null ? selectedDate.toLocal().toString().split(' ')[0] : 'Seleccionar fecha',
-        ),
-        validator: (value) => required && selectedDate == null ? 'Este campo es obligatorio' : null,
-        controller: TextEditingController(
-          text: selectedDate != null ? selectedDate.toLocal().toString().split(' ')[0] : '',
+    return GestureDetector(
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        if (pickedDate != null) {
+          setState(() {
+            fechaNacimiento = pickedDate;
+            _fechaNacimientoController.text = pickedDate.toLocal().toString().split(' ')[0];
+          });
+          onSaved(pickedDate);
+        }
+      },
+      child: AbsorbPointer(
+        child: TextFormField(
+          controller: _fechaNacimientoController,
+          decoration: InputDecoration(
+            labelText: label,
+            hintText: 'Seleccionar fecha',
+            contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0), // Ajuste de padding
+          ),
+          validator: (value) => required && (fechaNacimiento == null) ? 'Este campo es obligatorio' : null,
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
