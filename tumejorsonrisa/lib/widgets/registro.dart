@@ -128,28 +128,34 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
   }
 
   Widget _buildDatePicker(String label, Function(DateTime?) onSaved, bool required) {
-    DateTime? selectedDate;
-    return GestureDetector(
-      onTap: () async {
-        DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (pickedDate != null) {
-          setState(() {
-            selectedDate = pickedDate;
-          });
-          onSaved(pickedDate);
-        }
-      },
-      child: AbsorbPointer(
-        child: TextFormField(
-          decoration: InputDecoration(labelText: label, hintText: selectedDate != null ? selectedDate!.toLocal().toString().split(' ')[0] : 'Seleccionar fecha'),
-          validator: (value) => required && selectedDate == null ? 'Este campo es obligatorio' : null,
+  DateTime? selectedDate;
+  return GestureDetector(
+    onTap: () async {
+      DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now(),
+      );
+      if (pickedDate != null) {
+        setState(() {
+          selectedDate = pickedDate;
+        });
+        onSaved(pickedDate);
+      }
+    },
+    child: AbsorbPointer(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: label, 
+          hintText: selectedDate != null ? selectedDate.toLocal().toString().split(' ')[0] : 'Seleccionar fecha',
+        ),
+        validator: (value) => required && selectedDate == null ? 'Este campo es obligatorio' : null,
+        controller: TextEditingController(
+          text: selectedDate != null ? selectedDate.toLocal().toString().split(' ')[0] : '',
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
