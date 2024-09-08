@@ -49,7 +49,7 @@ class _ProgramarcitaState extends State<Programarcita> {
 
   Future<void> _autofillContactInfo(String documento) async {
     try {
-      final response = await http.get(Uri.parse('http://<tu-ngrok-url>/pacientes/$documento'));
+      final response = await http.get(Uri.parse('http://<tu-servidor-rails.com>/api/pacientes/$documento'));
       if (response.statusCode == 200) {
         final paciente = json.decode(response.body);
         setState(() {
@@ -70,6 +70,47 @@ class _ProgramarcitaState extends State<Programarcita> {
     final documento = _documentoController.text;
     if (documento.isNotEmpty) {
       _autofillContactInfo(documento);
+    }
+  }
+
+  Future<void> _programarCita() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final url = Uri.parse('http://<tu-servidor-rails.com>/api/appointments');
+        final response = await http.post(
+          url,
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'documento': _documentoController.text,
+            'telefono': _telefonoController.text,
+            'email': _emailController.text,
+            'nombre': _nombreController.text,
+            'apellido': _apellidoController.text,
+            'doctor': _selectedDoctor ?? '',
+            'fecha': _selectedDate?.toIso8601String() ?? '',
+            'hora': _selectedTime?.format(context) ?? '',
+            'motivo': _motivoController.text,
+          }),
+        );
+
+        if (response.statusCode == 201) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Cita programada exitosamente')),
+          );
+          Navigator.pop(context); // Regresar a la pantalla anterior
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al programar la cita')),
+          );
+        }
+      } catch (e) {
+        print('Error al programar la cita: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error en la conexión')),
+        );
+      }
     }
   }
 
@@ -204,10 +245,7 @@ class _ProgramarcitaState extends State<Programarcita> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Center(
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                        }
-                      },
+                      onPressed: _programarCita,
                       child: Text('Programar Cita'),
                     ),
                   ),

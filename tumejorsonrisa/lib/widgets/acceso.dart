@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; 
-import 'dart:convert'; 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:tumejorsonrisa/widgets/generarreporte.dart';
 import 'package:tumejorsonrisa/widgets/listapacientes.dart';
@@ -11,10 +11,10 @@ import 'package:tumejorsonrisa/widgets/registro.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
   String searchQuery = "";
   List<Map<String, String>> appointments = [];
@@ -22,6 +22,7 @@ class _HomePageState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    fetchAppointments(""); // Fetch all appointments on initialization
   }
 
   Future<void> fetchAppointments(String query) async {
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomeScreen> {
             'fecha': item['fecha']?.toString() ?? '',
             'hora': item['hora']?.toString() ?? '',
             'descripcion': item['descripcion']?.toString() ?? '',
-            'retratamientoPendiente': item['retratamientoPendiente']?.toString() ?? 'No' 
+            'retratamientoPendiente': item['retratamientoPendiente']?.toString() ?? 'No'
           }).toList();
         });
       } else {
@@ -111,16 +112,14 @@ class _HomePageState extends State<HomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => ProgramarretraPage()),
+                        MaterialPageRoute(builder: (context) => ProgramarretraPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
                       padding: EdgeInsets.all(14),
                     ),
-                    child: Text('Programar Retratamiento',
-                        style: TextStyle(fontSize: 18)),
+                    child: Text('Programar Retratamiento', style: TextStyle(fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
@@ -129,16 +128,14 @@ class _HomePageState extends State<HomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => GenerarreportePage()),
+                        MaterialPageRoute(builder: (context) => GenerarreportePage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       padding: EdgeInsets.all(14),
                     ),
-                    child: Text('Generar Reportes',
-                        style: TextStyle(fontSize: 18)),
+                    child: Text('Generar Reportes', style: TextStyle(fontSize: 18)),
                   ),
                 ),
               ],
@@ -204,8 +201,8 @@ class _HomePageState extends State<HomeScreen> {
                     SizedBox(height: 16),
                     Expanded(
                       child: ListView(
-                        children: appointments.map((appointment) {
-                          return DataTable(
+                        children: [
+                          DataTable(
                             columns: [
                               DataColumn(label: Text('Tipo ID')),
                               DataColumn(label: Text('Identificación')),
@@ -216,8 +213,8 @@ class _HomePageState extends State<HomeScreen> {
                               DataColumn(label: Text('Descripción de Cita')),
                               DataColumn(label: Text('Retratamiento Pendiente')),
                             ],
-                            rows: [
-                              DataRow(cells: [
+                            rows: appointments.map((appointment) {
+                              return DataRow(cells: [
                                 DataCell(Text(appointment['tipoId']!)),
                                 DataCell(Text(appointment['id']!)),
                                 DataCell(Text(appointment['nombre']!)),
@@ -226,10 +223,10 @@ class _HomePageState extends State<HomeScreen> {
                                 DataCell(Text(appointment['hora']!)),
                                 DataCell(Text(appointment['descripcion']!)),
                                 DataCell(Text(appointment['retratamientoPendiente']!)),
-                              ]),
-                            ],
-                          );
-                        }).toList(),
+                              ]);
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -244,15 +241,13 @@ class _HomePageState extends State<HomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => ListaPacientesPage()),
+                        MaterialPageRoute(builder: (context) => ListaPacientesPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                     ),
-                    child: Text('Lista de Pacientes',
-                        style: TextStyle(fontSize: 18)),
+                    child: Text('Lista de Pacientes', style: TextStyle(fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
@@ -261,15 +256,13 @@ class _HomePageState extends State<HomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => RegistroPaciente()),
+                        MaterialPageRoute(builder: (context) => RegistroPaciente()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
                     ),
-                    child: Text('Registrar Paciente',
-                        style: TextStyle(fontSize: 18)),
+                    child: Text('Registrar Paciente', style: TextStyle(fontSize: 18)),
                   ),
                 ),
               ],

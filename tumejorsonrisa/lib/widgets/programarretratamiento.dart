@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -71,6 +70,59 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
     final documento = _documentoController.text;
     if (documento.isNotEmpty) {
       _autofillContactInfo(documento);
+    }
+  }
+
+  Future<void> _scheduleRetratamiento() async {
+    if (_formKey.currentState!.validate()) {
+      final documento = _documentoController.text;
+      final telefono = _telefonoController.text;
+      final email = _emailController.text;
+      final nombre = _nombreController.text;
+      final apellido = _apellidoController.text;
+      final motivo = _motivoController.text;
+      final fecha = _selectedDate != null ? _selectedDate!.toIso8601String() : '';
+      final hora = _selectedTime != null ? _selectedTime!.format(context) : '';
+
+      final retratamiento = {
+        'documento': documento,
+        'telefono': telefono,
+        'email': email,
+        'nombre': nombre,
+        'apellido': apellido,
+        'motivo': motivo,
+        'fecha': fecha,
+        'hora': hora,
+        'doctor': _selectedDoctor,
+      };
+
+      print('Enviando datos: $retratamiento');  // Mensaje de depuración
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://<tu-ngrok-url>/retratamientos'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(retratamiento),
+        );
+
+        print('Respuesta del servidor: ${response.statusCode}');  // Mensaje de depuración
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Retratamiento programado con éxito')),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al programar retratamiento')),
+          );
+        }
+      } catch (e) {
+        print('Error al programar retratamiento: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error de conexión')),
+        );
+      }
     }
   }
 
@@ -205,10 +257,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Center(
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                        }
-                      },
+                      onPressed: _scheduleRetratamiento,
                       child: Text('Programar Retratamiento'),
                     ),
                   ),
