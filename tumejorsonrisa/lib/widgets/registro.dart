@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // Para la conversión de JSON
 
 class RegistroPaciente extends StatefulWidget {
   @override
@@ -25,6 +27,63 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
     // Limpiar los controladores al destruir el widget
     _fechaNacimientoController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      // Construir el cuerpo de la solicitud en formato JSON
+      final Map<String, dynamic> data = {
+        'nombre': nombre,
+        'apellido': apellido,
+        'fecha_nacimiento': fechaNacimiento?.toIso8601String(),
+        'tipo_documento': tipoDocumento,
+        'numero_documento': numeroDocumento,
+        'direccion': direccion,
+        'ciudad': ciudad,
+        'telefono': telefono,
+        'estado_civil': estadoCivil,
+        'sexo': sexo,
+        'raza': raza,
+        'tipo_sangre': tipoSangre,
+        'ocupacion': ocupacion,
+        'eps': eps,
+        'alergias': alergias,
+        'cirugias': cirugias,
+        'emergency_contact': {
+          'nombre': _emergencyNombre,
+          'direccion': _emergencyDireccion,
+          'ciudad': _emergencyCiudad,
+          'telefono': _emergencyTelefono,
+          'relacion': _emergencyRelacion,
+        },
+      };
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://<tu-ngrok-url>/pacientes'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json.encode(data),
+        );
+
+        if (response.statusCode == 201) {
+          // Si el servidor devuelve un código de estado 201 (creado), el registro fue exitoso
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Paciente registrado con éxito')));
+          // Limpiar el formulario
+          _formKey.currentState!.reset();
+        } else {
+          // Manejar el error si la respuesta no es 201 Created
+          throw Exception('Failed to register paciente');
+        }
+      } catch (e) {
+        // Manejar cualquier excepción
+        print('Error submitting form: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al registrar paciente')));
+      }
+    }
   }
 
   @override
@@ -70,16 +129,10 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
               _buildTextField('Ciudad (Contacto de Emergencia)', (value) => _emergencyCiudad = value!, true),
               _buildTextField('Número de Teléfono (Contacto de Emergencia)', (value) => _emergencyTelefono = value!, true, TextInputType.phone),
               _buildTextField('Relación (Contacto de Emergencia)', (value) => _emergencyRelacion = value!, false),
-              
+
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // Lógica para manejar el formulario completo
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Formulario enviado con éxito')));
-                  }
-                },
+                onPressed: _submitForm,
                 child: Text('Registrar'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
