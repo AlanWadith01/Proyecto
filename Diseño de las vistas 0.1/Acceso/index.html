@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Médica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .menu-item {
+            padding: 15px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .menu-item:hover {
+            background-color: #007bff;
+        }
+        .menu-item a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sistema de Gestión Médica</h2>
+        <div class="grid-container">
+            <div class="menu-item">
+                <a href="#Nuevo Registro">Nuevo Registro De Paciente</a>
+            </div>
+            <div class="menu-item">
+                <a href="#programacion-cita">Programación de Cita</a>
+            </div>
+            <div class="menu-item">
+                <a href="#tratamiento">Programación de Tratamiento</a>
+            </div>
+            <div class="menu-item">
+                <a href="#generar-reporte">Generar Reporte</a>
+            </div>
+            <div class="menu-item">
+                <a href="#buscar-paciente">Buscar Paciente</a>
+            </div>
+            <div class="menu-item">
+                <a href="#Contacto de Emergencia">Contacto de Emergencia</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
