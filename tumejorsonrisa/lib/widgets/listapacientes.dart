@@ -72,7 +72,7 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, 
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

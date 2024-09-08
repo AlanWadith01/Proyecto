@@ -37,8 +37,8 @@ class PacienteDetallePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RadiografiasPage()),
-                );
+                  MaterialPageRoute(builder: (context) => RadiografiasPage(pacienteId: paciente['id']),
+                ));
               },
               child: Text('Radiografías'),
             ),

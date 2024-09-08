@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tumejorsonrisa/widgets/acceso.dart';
 import 'package:tumejorsonrisa/widgets/recontra.dart';
 
-// Asegúrate de importar las páginas necesariasu
-
-
 
 class LoginPage extends StatelessWidget {
   @override
