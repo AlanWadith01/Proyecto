@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    fetchAppointments(""); // Fetch all appointments on initialization
+    fetchAppointments("");
   }
 
   Future<void> fetchAppointments(String query) async {
@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'retratamientoPendiente': item['retratamientoPendiente']?.toString() ?? 'No'
           }).toList();
         });
+        print('Appointments fetched successfully: $appointments');
       } else {
         print('Error en la solicitud: ${response.statusCode}');
       }
@@ -58,8 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Tu Mejor Sonrisa'),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: GestureDetector(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: InkWell(
               onTap: () {
                 Navigator.push(
                   context,
@@ -67,16 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Center(
-                  child: Text(
-                    'Cerrar sesión',
-                    style: TextStyle(color: Colors.white, fontSize: 16.0),
+                width: 150, 
+                child: TextField(
+                  enabled: false, 
+                  decoration: InputDecoration(
+                    hintText: 'Cerrar sesión',
+                    hintStyle: TextStyle(color: Colors.black),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                   ),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -92,50 +93,74 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Programarcita()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.all(14),
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Programarcita()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.all(14),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Programar Cita',
+                          style: TextStyle(color: Colors.white, fontSize: 9),
+                        ),
+                      ),
                     ),
-                    child: Text('Programar Cita', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProgramarretraPage()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.all(14),
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ProgramarretraPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.all(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Programar Retratamiento',
+                          style: TextStyle(color: Colors.white, fontSize: 7),
+                        ),
+                      ),
                     ),
-                    child: Text('Programar Retratamiento', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GenerarHistorialClinicoPage()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.all(14),
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GenerarHistorialClinicoPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.all(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Generar Reportes',
+                          style: TextStyle(color: Colors.white, fontSize: 9),
+                        ),
+                      ),
                     ),
-                    child: Text('Generar Reportes', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
               ],
@@ -150,12 +175,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       fetchAppointments(value);
                     },
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Buscar por ID',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.0)),
+                      contentPadding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+                      hintText: 'Ingrese el Numero de Identificacion',
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                SizedBox(width: 15),
                 ElevatedButton(
                   onPressed: () {
                     fetchAppointments(searchController.text);
@@ -165,9 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.search),
-                      SizedBox(width: 4),
-                      Text('Buscar'),
+                      SizedBox(width: 5),
+                      Text('Buscar', style: TextStyle(color: Colors.white, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -175,94 +200,80 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 30),
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8.0,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'CITAS',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          DataTable(
-                            columns: [
-                              DataColumn(label: Text('Tipo ID')),
-                              DataColumn(label: Text('Identificación')),
-                              DataColumn(label: Text('Nombre Paciente')),
-                              DataColumn(label: Text('Odontólogo')),
-                              DataColumn(label: Text('Fecha')),
-                              DataColumn(label: Text('Hora')),
-                              DataColumn(label: Text('Descripción de Cita')),
-                              DataColumn(label: Text('Retratamiento Pendiente')),
-                            ],
-                            rows: appointments.map((appointment) {
-                              return DataRow(cells: [
-                                DataCell(Text(appointment['tipoId']!)),
-                                DataCell(Text(appointment['id']!)),
-                                DataCell(Text(appointment['nombre']!)),
-                                DataCell(Text(appointment['odontologo']!)),
-                                DataCell(Text(appointment['fecha']!)),
-                                DataCell(Text(appointment['hora']!)),
-                                DataCell(Text(appointment['descripcion']!)),
-                                DataCell(Text(appointment['retratamientoPendiente']!)),
-                              ]);
-                            }).toList(),
+              child: appointments.isEmpty
+                  ? Center(child: Text('No se encontraron citas'))
+                  : ListView.builder(
+                      itemCount: appointments.length,
+                      itemBuilder: (context, index) {
+                        final appointment = appointments[index];
+                        return Card(
+                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(16.0),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Tipo ID: ${appointment['tipoId']}'),
+                                Text('Identificación: ${appointment['id']}'),
+                                Text('Nombre Paciente: ${appointment['nombre']}'),
+                                Text('Odontólogo: ${appointment['odontologo']}'),
+                                Text('Fecha: ${appointment['fecha']}'),
+                                Text('Hora: ${appointment['hora']}'),
+                                Text('Descripción de Cita: ${appointment['descripcion']}'),
+                                Text('Retratamiento Pendiente: ${appointment['retratamientoPendiente']}'),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-              ),
             ),
             SizedBox(height: 30),
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ListaPacientesPage()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ListaPacientesPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Lista de Pacientes',
+                          style: TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                      ),
                     ),
-                    child: Text('Lista de Pacientes', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegistroPaciente()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegistroPaciente()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Registrar Paciente',
+                          style: TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                      ),
                     ),
-                    child: Text('Registrar Paciente', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
               ],

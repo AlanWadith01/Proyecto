@@ -25,7 +25,7 @@ class _ProgramarcitaState extends State<Programarcita> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != _selectedDate) {
@@ -63,6 +63,9 @@ class _ProgramarcitaState extends State<Programarcita> {
       }
     } catch (e) {
       print('Error al autocompletar: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar la información del paciente')),
+      );
     }
   }
 
@@ -99,7 +102,7 @@ class _ProgramarcitaState extends State<Programarcita> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Cita programada exitosamente')),
           );
-          Navigator.pop(context); // Regresar a la pantalla anterior
+          Navigator.pop(context); 
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error al programar la cita')),
@@ -119,139 +122,162 @@ class _ProgramarcitaState extends State<Programarcita> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Programación de Citas'),
+        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _documentoController,
+                      decoration: InputDecoration(
+                        labelText: 'Número de Documento',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese el número de documento';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _searchPatient,
+                    child: Text('Buscar'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                controller: _nombreController,
+                decoration: InputDecoration(
+                  labelText: 'Nombre',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: false,
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                controller: _apellidoController,
+                decoration: InputDecoration(
+                  labelText: 'Apellido',
+                  border: OutlineInputBorder(),
+                ),
+                enabled: false,
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                controller: _telefonoController,
+                decoration: InputDecoration(
+                  labelText: 'Número de Teléfono',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
+                enabled: false,
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Correo Electrónico',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                enabled: false,
+              ),
+              SizedBox(height: 16.0),
+              DropdownButtonFormField<String>(
+                value: _selectedDoctor,
+                hint: Text('Doctor encargado'),
+                items: [
+                  DropdownMenuItem(
+                    child: Text('Dra. Natalia Muñoz'),
+                    value: 'dra_natalia',
+                  ),
+                  DropdownMenuItem(
+                    child: Text('Dr. Oscar Perez'),
+                    value: 'dr_oscar',
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDoctor = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Por favor seleccione un doctor';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.0),
+              Text('Fecha de la Cita:'),
+              Row(
+                children: [
+                  Text(_selectedDate == null
+                      ? 'No seleccionada'
+                      : '${_selectedDate!.toLocal()}'.split(' ')[0]),
+                  IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              Text('Hora de la Cita:'),
+              Row(
+                children: [
+                  Text(_selectedTime == null
+                      ? 'No seleccionada'
+                      : _selectedTime!.format(context)),
+                  IconButton(
+                    icon: Icon(Icons.access_time),
+                    onPressed: () => _selectTime(context),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.0),
+              Center(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _documentoController,
-                        decoration: InputDecoration(
-                          labelText: 'Número de Documento',
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor ingrese el número de documento';
-                          }
-                          return null;
-                        },
+                    Text(
+                      'Motivo de la Cita',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: _searchPatient,
-                      child: Text('Buscar'),
+                    SizedBox(height: 8.0),
+                    TextField(
+                      controller: _motivoController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 5,
                     ),
                   ],
                 ),
-                TextFormField(
-                  controller: _nombreController,
-                  decoration: InputDecoration(
-                    labelText: 'Nombre',
-                  ),
-                  enabled: false,
-                ),
-                TextFormField(
-                  controller: _apellidoController,
-                  decoration: InputDecoration(
-                    labelText: 'Apellido',
-                  ),
-                  enabled: false,
-                ),
-                TextFormField(
-                  controller: _telefonoController,
-                  decoration: InputDecoration(
-                    labelText: 'Número de Teléfono',
-                  ),
-                  keyboardType: TextInputType.phone,
-                  enabled: false,
-                ),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Correo Electrónico',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  enabled: false,
-                ),
-                DropdownButtonFormField<String>(
-                  value: _selectedDoctor,
-                  hint: Text('Doctor encargado'),
-                  items: [
-                    DropdownMenuItem(
-                      child: Text('Dra. Natalia Muñoz'),
-                      value: 'dra_natalia',
-                    ),
-                    DropdownMenuItem(
-                      child: Text('Dr. Oscar Perez'),
-                      value: 'dr_oscar',
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedDoctor = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Por favor seleccione un doctor';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text('Fecha de la Cita:'),
-                Row(
-                  children: [
-                    Text(_selectedDate == null
-                        ? 'No seleccionada'
-                        : '${_selectedDate!.toLocal()}'.split(' ')[0]),
-                    IconButton(
-                      icon: Icon(Icons.calendar_today),
-                      onPressed: () => _selectDate(context),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Text('Hora de la Cita:'),
-                Row(
-                  children: [
-                    Text(_selectedTime == null
-                        ? 'No seleccionada'
-                        : _selectedTime!.format(context)),
-                    IconButton(
-                      icon: Icon(Icons.access_time),
-                      onPressed: () => _selectTime(context),
-                    ),
-                  ],
-                ),
-                TextField(
-                  controller: _motivoController,
-                  decoration: InputDecoration(
-                    labelText: 'Motivo de la Cita',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: _programarCita,
-                      child: Text('Programar Cita'),
-                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: _programarCita,
+                    child: Text('Programar Cita'),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

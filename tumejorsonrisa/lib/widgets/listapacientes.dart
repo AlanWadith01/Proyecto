@@ -11,6 +11,8 @@ class ListaPacientesPage extends StatefulWidget {
 
 class _ListaPacientesPageState extends State<ListaPacientesPage> {
   List<dynamic> pacientes = [];
+  bool isLoading = true;
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -19,17 +21,25 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
   }
 
   Future<void> _fetchPacientes() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
     try {
       final response = await http.get(Uri.parse('http://<tu-ngrok-url>/pacientes'));
       if (response.statusCode == 200) {
         setState(() {
           pacientes = json.decode(response.body);
+          isLoading = false;
         });
       } else {
-        throw Exception('Failed to load pacientes');
+        throw Exception('Error al cargar pacientes');
       }
     } catch (e) {
-      print('Error fetching pacientes: $e');
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Error al cargar pacientes: $e';
+      });
     }
   }
 
@@ -38,36 +48,54 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lista de Pacientes'),
+        backgroundColor: Colors.blue,
+        elevation: 0,
       ),
-      body: Padding(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade100, Colors.blue.shade50],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
-        child: pacientes.isEmpty
+        child: isLoading
             ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: pacientes.length,
-                itemBuilder: (context, index) {
-                  final paciente = pacientes[index];
-                  final nombreCompleto = '${paciente['nombres']} ${paciente['apellidos']}';
-                  return ListTile(
-                    title: Text(nombreCompleto),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PacienteDetallePage(paciente: paciente),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+            : errorMessage.isNotEmpty
+                ? Center(child: Text(errorMessage, style: TextStyle(color: Colors.red)))
+                : RefreshIndicator(
+                    onRefresh: _fetchPacientes,
+                    child: ListView.builder(
+                      itemCount: pacientes.length,
+                      itemBuilder: (context, index) {
+                        final paciente = pacientes[index];
+                        final nombreCompleto = '${paciente['nombres']} ${paciente['apellidos']}';
+                        return Card(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            title: Text(nombreCompleto),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PacienteDetallePage(paciente: paciente),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => RegistroPaciente()),
-          );
+          ).then((_) => _fetchPacientes());
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,

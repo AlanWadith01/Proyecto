@@ -70,10 +70,19 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
     return Scaffold(
       appBar: AppBar(
         title: Text('Generar Historial Clínico'),
+        backgroundColor: Colors.blue, // Color de fondo del AppBar
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade100, Colors.blue.shade50],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
@@ -83,6 +92,14 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                   controller: _documentoController,
                   decoration: InputDecoration(
                     labelText: 'Número de Documento del Paciente',
+                    prefixIcon: Icon(Icons.assignment_ind, color: Colors.blue),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                   keyboardType: TextInputType.text,
                   onChanged: (value) {
@@ -107,18 +124,26 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                 ),
                 SizedBox(height: 16),
                 if (_nombrePaciente.isNotEmpty) ...[
-                  Text('Nombre: $_nombrePaciente'),
-                  Text('Teléfono: $_telefono'),
-                  Text('Correo Electrónico: $_email'),
+                  Text('Nombre: $_nombrePaciente', style: TextStyle(fontSize: 16.0)),
+                  Text('Teléfono: $_telefono', style: TextStyle(fontSize: 16.0)),
+                  Text('Correo Electrónico: $_email', style: TextStyle(fontSize: 16.0)),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _obtenerHistorialClinico,
                     child: Text('Obtener Historial Clínico'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                   ),
                 ],
                 if (_citas.isNotEmpty || _retratamientos.isNotEmpty) ...[
                   SizedBox(height: 16),
-                  Text('Historial de Citas:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Historial de Citas:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
@@ -131,7 +156,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                     },
                   ),
                   SizedBox(height: 16),
-                  Text('Historial de Retratamientos:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Historial de Retratamientos:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
@@ -145,7 +170,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                   ),
                 ] else if (_nombrePaciente.isNotEmpty) ...[
                   SizedBox(height: 16),
-                  Text('No se encontraron citas o retratamientos para este paciente.'),
+                  Text('No se encontraron citas o retratamientos para este paciente.', style: TextStyle(fontSize: 16.0)),
                 ]
               ],
             ),

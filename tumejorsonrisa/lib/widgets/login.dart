@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tumejorsonrisa/widgets/acceso.dart';
 import 'package:tumejorsonrisa/widgets/recontra.dart';
 
-
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -10,13 +9,12 @@ class LoginPage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-         Image.asset("lib/images/fondo.jpg",
-          fit: BoxFit.cover,
-          color: Colors.black.withOpacity(0),
-          colorBlendMode: BlendMode.darken,
-         ),
-
-       
+          Image.asset(
+            "lib/images/fondo.jpg",
+            fit: BoxFit.cover,
+            color: Colors.black.withOpacity(0),
+            colorBlendMode: BlendMode.darken,
+          ),
           Container(
             color: Colors.black.withOpacity(0.5),
           ),
@@ -56,7 +54,11 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 20),
                     Text(
                       'Usuario:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     TextField(
                       decoration: InputDecoration(
@@ -77,7 +79,11 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 10),
                     Text(
                       'Contraseña:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     TextField(
                       decoration: InputDecoration(
@@ -104,9 +110,9 @@ class LoginPage extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => HomeScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()),
                             );
-                           
                           },
                           child: Text('Iniciar Sesión'),
                           style: ElevatedButton.styleFrom(
@@ -114,15 +120,23 @@ class LoginPage extends StatelessWidget {
                             foregroundColor: Colors.white,
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                           Navigator.push(context, MaterialPageRoute(builder: (context) => RecoverPasswordPage()));
-                          },
-                          child: Text(
-                            '¿Ha olvidado su contraseña?',
-                            style: TextStyle(
-                              color: Colors.white,
-                              decoration: TextDecoration.underline,
+                        Flexible(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RecoverPasswordPage()));
+                            },
+                            child: Text(
+                              '¿Ha olvidado su contraseña?',
+                              style: TextStyle(
+                                color: Colors.white,
+                                decoration: TextDecoration.underline,
+                              ),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
