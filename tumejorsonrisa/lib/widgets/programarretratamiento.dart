@@ -49,7 +49,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
 
   Future<void> _autofillContactInfo(String documento) async {
     try {
-      final response = await http.get(Uri.parse('http://<tu-ngrok-url>/pacientes/$documento'));
+      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
       if (response.statusCode == 200) {
         final paciente = json.decode(response.body);
         setState(() {
@@ -94,7 +94,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://<tu-ngrok-url>/retratamientos'),
+          Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/retratamientos'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(retratamiento),
         );
@@ -123,7 +123,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Programación de Retratamientos'),
-        backgroundColor: Colors.blueAccent,  // Alinea con el estilo de RegistroPaciente
+        backgroundColor: Colors.blueAccent,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -173,10 +173,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                 decoration: InputDecoration(
                   labelText: 'Nombre',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),  // Borde redondeado
+                    borderRadius: BorderRadius.circular(12.0), 
                   ),
                   filled: true,
-                  fillColor: Colors.white,  // Color de fondo
+                  fillColor: Colors.white, 
                 ),
                 enabled: false,
               ),
@@ -186,10 +186,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                 decoration: InputDecoration(
                   labelText: 'Apellido',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),  // Borde redondeado
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
                   filled: true,
-                  fillColor: Colors.white,  // Color de fondo
+                  fillColor: Colors.white,  
                 ),
                 enabled: false,
               ),
@@ -199,10 +199,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                 decoration: InputDecoration(
                   labelText: 'Número de Teléfono',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),  // Borde redondeado
+                    borderRadius: BorderRadius.circular(12.0), 
                   ),
                   filled: true,
-                  fillColor: Colors.white,  // Color de fondo
+                  fillColor: Colors.white, 
                 ),
                 keyboardType: TextInputType.phone,
                 enabled: false,
@@ -213,10 +213,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                 decoration: InputDecoration(
                   labelText: 'Correo Electrónico',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),  // Borde redondeado
+                    borderRadius: BorderRadius.circular(12.0), 
                   ),
                   filled: true,
-                  fillColor: Colors.white,  // Color de fondo
+                  fillColor: Colors.white, 
                 ),
                 keyboardType: TextInputType.emailAddress,
                 enabled: false,
@@ -248,10 +248,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                 },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),  // Borde redondeado
+                    borderRadius: BorderRadius.circular(12.0), 
                   ),
                   filled: true,
-                  fillColor: Colors.white,  // Color de fondo
+                  fillColor: Colors.white, 
                 ),
               ),
               SizedBox(height: 16.0),
@@ -299,10 +299,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
                       controller: _motivoController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),  // Borde redondeado
+                          borderRadius: BorderRadius.circular(12.0), 
                         ),
                         filled: true,
-                        fillColor: Colors.white,  // Color de fondo
+                        fillColor: Colors.white, 
                       ),
                       maxLines: 12,
                     ),

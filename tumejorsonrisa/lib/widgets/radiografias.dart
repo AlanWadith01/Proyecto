@@ -28,7 +28,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
 
   Future<void> _fetchRadiografias() async {
     try {
-      final response = await http.get(Uri.parse('http://<tu-ngrok-url>/pacientes/${widget.pacienteId}/radiografias'));
+      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/${widget.pacienteId}/radiografias'));
       if (response.statusCode == 200) {
         setState(() {
           radiografias = json.decode(response.body);
@@ -58,7 +58,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://<tu-ngrok-url>/pacientes/${widget.pacienteId}/radiografias'),
+      Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/${widget.pacienteId}/radiografias'),
     );
 
     request.fields['descripcion'] = _descripcionController.text;

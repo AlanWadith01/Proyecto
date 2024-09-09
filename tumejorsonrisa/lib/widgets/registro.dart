@@ -58,7 +58,7 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://<tu-ngrok-url>/pacientes'),
+          Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patiens'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -83,7 +83,7 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Registro de Paciente'),
-        backgroundColor: Colors.blue, // Color de fondo del AppBar
+        backgroundColor: Colors.blue, 
         elevation: 0,
       ),
       body: Container(

@@ -49,7 +49,7 @@ class _ProgramarcitaState extends State<Programarcita> {
 
   Future<void> _autofillContactInfo(String documento) async {
     try {
-      final response = await http.get(Uri.parse('http://<tu-servidor-rails.com>/api/pacientes/$documento'));
+      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
       if (response.statusCode == 200) {
         final paciente = json.decode(response.body);
         setState(() {
