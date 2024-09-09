@@ -79,9 +79,8 @@ class RecoverPasswordPage extends StatelessWidget {
                             SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () {
-                                // Acción para recuperar contraseña
                               },
-                              child: Text('Recuperar contraseña'),
+                              child: Text('Enviar correo electronico'),
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(vertical: 16),
                               ),
@@ -93,7 +92,6 @@ class RecoverPasswordPage extends StatelessWidget {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            // Acción para volver al inicio
                             Navigator.pop(context);
                           },
                           child: Text('Volver al inicio'),

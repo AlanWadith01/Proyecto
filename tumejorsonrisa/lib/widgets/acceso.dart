@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: Colors.blue,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Center(
@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       backgroundColor: Colors.blue,
                       padding: EdgeInsets.all(14),
                     ),
-                    child: Text('Programar Cita', style: TextStyle(fontSize: 18)),
+                    child: Text('Programar Cita', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
@@ -116,10 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
+                      backgroundColor: Colors.blue,
                       padding: EdgeInsets.all(14),
                     ),
-                    child: Text('Programar Retratamiento', style: TextStyle(fontSize: 18)),
+                    child: Text('Programar Retratamiento', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
@@ -128,14 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => GenerarreportePage()),
+                        MaterialPageRoute(builder: (context) => GenerarHistorialClinicoPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Colors.blue,
                       padding: EdgeInsets.all(14),
                     ),
-                    child: Text('Generar Reportes', style: TextStyle(fontSize: 18)),
+                    child: Text('Generar Reportes', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
               ],
@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fetchAppointments(searchController.text);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: Colors.blue,
                   ),
                   child: Row(
                     children: [
@@ -245,9 +245,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: Colors.blue,
                     ),
-                    child: Text('Lista de Pacientes', style: TextStyle(fontSize: 18)),
+                    child: Text('Lista de Pacientes', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 16),
@@ -260,9 +260,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
+                      backgroundColor: Colors.blue,
                     ),
-                    child: Text('Registrar Paciente', style: TextStyle(fontSize: 18)),
+                    child: Text('Registrar Paciente', style: TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
               ],

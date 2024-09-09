@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
         children: [
          Image.asset("lib/images/fondo.jpg",
           fit: BoxFit.cover,
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withOpacity(0),
           colorBlendMode: BlendMode.darken,
          ),
 
@@ -60,7 +60,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     TextField(
                       decoration: InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Ingrese su usuario',
                         labelStyle: TextStyle(color: Colors.white),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
@@ -81,7 +81,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     TextField(
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: 'Ingrese su contraseña',
                         labelStyle: TextStyle(color: Colors.white),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
