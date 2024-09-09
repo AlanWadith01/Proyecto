@@ -15,9 +15,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
   String searchQuery = "";
   List<Map<String, String>> appointments = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -26,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchAppointments(String query) async {
+    setState(() {
+      isLoading = true;
+    });
+
     final url = Uri.parse('http://tu-servidor-rails.com/api/appointments?query=$query');
     try {
       final response = await http.get(url);
@@ -43,13 +48,39 @@ class _HomeScreenState extends State<HomeScreen> {
             'retratamientoPendiente': item['retratamientoPendiente']?.toString() ?? 'No'
           }).toList();
         });
-        print('Appointments fetched successfully: $appointments');
       } else {
-        print('Error en la solicitud: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error en la solicitud: ${response.statusCode}'),
+        ));
       }
     } catch (e) {
-      print('Error en la conexión: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error de conexión: $e'),
+      ));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  Widget _buildButton(String text, VoidCallback onPressed, {double fontSize = 13, double padding = 14}) {
+    return SizedBox(
+      height: 50,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          padding: EdgeInsets.all(padding),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.white, fontSize: fontSize),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -68,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: Container(
-                width: 150, 
+                width: 150,
                 child: TextField(
-                  enabled: false, 
+                  enabled: false,
                   decoration: InputDecoration(
                     hintText: 'Cerrar sesión',
                     hintStyle: TextStyle(color: Colors.black),
@@ -92,77 +123,26 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Programarcita()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: EdgeInsets.all(14),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Programar Cita',
-                          style: TextStyle(color: Colors.white, fontSize: 9),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _buildButton('Programar Cita', () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Programarcita()),
+                  );
+                }),
                 SizedBox(width: 16),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ProgramarretraPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: EdgeInsets.all(5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Programar Retratamiento',
-                          style: TextStyle(color: Colors.white, fontSize: 7),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _buildButton('Programar Retratamiento', () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProgramarretraPage()),
+                  );
+                }, fontSize: 7, padding: 5),
                 SizedBox(width: 16),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => GenerarHistorialClinicoPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: EdgeInsets.all(5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Generar Reportes',
-                          style: TextStyle(color: Colors.white, fontSize: 9),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _buildButton('Generar Reportes', () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => GenerarHistorialClinicoPage()),
+                  );
+                }, fontSize: 9, padding: 5),
               ],
             ),
             SizedBox(height: 30),
@@ -177,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.0)),
                       contentPadding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
-                      hintText: 'Ingrese el Numero de Identificacion',
+                      hintText: 'Ingrese el Número de Identificación',
                     ),
                   ),
                 ),
@@ -192,7 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     children: [
                       SizedBox(width: 5),
-                      Text('Buscar', style: TextStyle(color: Colors.white, fontSize: 14)),
+                      isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text('Buscar', style: TextStyle(color: Colors.white, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -232,49 +214,21 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ListaPacientesPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Lista de Pacientes',
-                          style: TextStyle(color: Colors.white, fontSize: 13),
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: _buildButton('Lista de Pacientes', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ListaPacientesPage()),
+                    );
+                  }, fontSize: 13),
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RegistroPaciente()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Registrar Paciente',
-                          style: TextStyle(color: Colors.white, fontSize: 13),
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: _buildButton('Registrar Paciente', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegistroPaciente()),
+                    );
+                  }, fontSize: 13),
                 ),
               ],
             ),

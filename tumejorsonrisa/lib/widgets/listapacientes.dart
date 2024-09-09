@@ -38,9 +38,28 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage = 'Error al cargar pacientes: $e';
+        errorMessage = 'Error al cargar pacientes: ${e.toString()}';
       });
     }
+  }
+
+  Widget _buildPacienteCard(dynamic paciente) {
+    final nombreCompleto = '${paciente['nombres']} ${paciente['apellidos']}';
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        title: Text(nombreCompleto),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PacienteDetallePage(paciente: paciente),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -68,25 +87,7 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
                     onRefresh: _fetchPacientes,
                     child: ListView.builder(
                       itemCount: pacientes.length,
-                      itemBuilder: (context, index) {
-                        final paciente = pacientes[index];
-                        final nombreCompleto = '${paciente['nombres']} ${paciente['apellidos']}';
-                        return Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
-                          child: ListTile(
-                            title: Text(nombreCompleto),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PacienteDetallePage(paciente: paciente),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                      itemBuilder: (context, index) => _buildPacienteCard(pacientes[index]),
                     ),
                   ),
       ),

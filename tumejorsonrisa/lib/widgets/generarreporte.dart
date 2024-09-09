@@ -15,11 +15,19 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
   String _email = '';
   List<Map<String, dynamic>> _citas = [];
   List<Map<String, dynamic>> _retratamientos = [];
+  bool _isLoadingPaciente = false;
+  bool _isLoadingHistorial = false;
 
   final String _baseUrl = 'https://tu-backend-url.com'; 
 
   Future<void> _obtenerDatosPaciente() async {
     final documento = _documentoController.text;
+    setState(() {
+      _isLoadingPaciente = true;
+      _nombrePaciente = '';
+      _telefono = '';
+      _email = '';
+    });
     try {
       final response = await http.get(Uri.parse('$_baseUrl/pacientes/$documento'));
 
@@ -29,21 +37,25 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
           _nombrePaciente = data['nombre'];
           _telefono = data['telefono'];
           _email = data['email'];
+          _isLoadingPaciente = false;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error al obtener los datos del paciente.'),
         ));
+        setState(() => _isLoadingPaciente = false);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error de conexión: $e'),
       ));
+      setState(() => _isLoadingPaciente = false);
     }
   }
 
   Future<void> _obtenerHistorialClinico() async {
     final documento = _documentoController.text;
+    setState(() => _isLoadingHistorial = true);
     try {
       final response = await http.get(Uri.parse('$_baseUrl/historial/$documento'));
 
@@ -52,17 +64,44 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
         setState(() {
           _citas = List<Map<String, dynamic>>.from(data['citas']);
           _retratamientos = List<Map<String, dynamic>>.from(data['retratamientos']);
+          _isLoadingHistorial = false;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error al obtener el historial clínico.'),
         ));
+        setState(() => _isLoadingHistorial = false);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error de conexión: $e'),
       ));
+      setState(() => _isLoadingHistorial = false);
     }
+  }
+
+  Widget _buildHistorialSection(String title, List<Map<String, dynamic>> items, String Function(Map<String, dynamic>) itemBuilder) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+        SizedBox(height: 8),
+        items.isNotEmpty
+          ? ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: items.length,
+              separatorBuilder: (context, index) => Divider(),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(itemBuilder(items[index])),
+                );
+              },
+            )
+          : Text('No hay datos disponibles', style: TextStyle(fontSize: 16.0)),
+        SizedBox(height: 16),
+      ],
+    );
   }
 
   @override
@@ -70,7 +109,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
     return Scaffold(
       appBar: AppBar(
         title: Text('Generar Historial Clínico'),
-        backgroundColor: Colors.blue, // Color de fondo del AppBar
+        backgroundColor: Colors.blue,
         elevation: 0,
       ),
       body: Container(
@@ -123,14 +162,18 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                   },
                 ),
                 SizedBox(height: 16),
-                if (_nombrePaciente.isNotEmpty) ...[
+                if (_isLoadingPaciente) ...[
+                  Center(child: CircularProgressIndicator()),
+                ] else if (_nombrePaciente.isNotEmpty) ...[
                   Text('Nombre: $_nombrePaciente', style: TextStyle(fontSize: 16.0)),
                   Text('Teléfono: $_telefono', style: TextStyle(fontSize: 16.0)),
                   Text('Correo Electrónico: $_email', style: TextStyle(fontSize: 16.0)),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _obtenerHistorialClinico,
-                    child: Text('Obtener Historial Clínico'),
+                    child: _isLoadingHistorial
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text('Obtener Historial Clínico'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -141,37 +184,22 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                     ),
                   ),
                 ],
-                if (_citas.isNotEmpty || _retratamientos.isNotEmpty) ...[
-                  SizedBox(height: 16),
-                  Text('Historial de Citas:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: _citas.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text('Fecha: ${_citas[index]['fecha']}'),
-                        subtitle: Text('Hora: ${_citas[index]['hora']} - Motivo: ${_citas[index]['motivo']}'),
-                      );
-                    },
+                SizedBox(height: 16),
+                if (!_isLoadingHistorial && (_citas.isNotEmpty || _retratamientos.isNotEmpty)) ...[
+                  _buildHistorialSection(
+                    'Historial de Citas:',
+                    _citas,
+                    (item) => 'Fecha: ${item['fecha']} - Hora: ${item['hora']} - Motivo: ${item['motivo']}',
                   ),
-                  SizedBox(height: 16),
-                  Text('Historial de Retratamientos:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: _retratamientos.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text('Fecha: ${_retratamientos[index]['fecha']}'),
-                        subtitle: Text('Tipo: ${_retratamientos[index]['tipo']}'),
-                      );
-                    },
+                  _buildHistorialSection(
+                    'Historial de Retratamientos:',
+                    _retratamientos,
+                    (item) => 'Fecha: ${item['fecha']} - Tipo: ${item['tipo']}',
                   ),
                 ] else if (_nombrePaciente.isNotEmpty) ...[
                   SizedBox(height: 16),
                   Text('No se encontraron citas o retratamientos para este paciente.', style: TextStyle(fontSize: 16.0)),
-                ]
+                ],
               ],
             ),
           ),
