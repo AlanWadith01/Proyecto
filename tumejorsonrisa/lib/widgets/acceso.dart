@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = true;
     });
 
-    final url = Uri.parse('http://tu-servidor-rails.com/api/appointments?query=$query');
+    final url = Uri.parse('https://d1e5-181-78-21-163.ngrok-free.app/api/appointments?query=$query');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {

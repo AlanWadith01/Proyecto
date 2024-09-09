@@ -26,7 +26,7 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
       errorMessage = '';
     });
     try {
-      final response = await http.get(Uri.parse('http://<tu-ngrok-url>/pacientes'));
+      final response = await http.get(Uri.parse('https://d1e5-181-78-21-163.ngrok-free.app/patients'));
       if (response.statusCode == 200) {
         setState(() {
           pacientes = json.decode(response.body);
@@ -44,7 +44,7 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
   }
 
   Widget _buildPacienteCard(dynamic paciente) {
-    final nombreCompleto = '${paciente['nombres']} ${paciente['apellidos']}';
+    final nombreCompleto = '${paciente['nombre']} ${paciente['apellido']}';
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: EdgeInsets.symmetric(vertical: 8.0),
