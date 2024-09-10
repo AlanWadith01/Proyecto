@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_09_081019) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_09_144055) do
   create_table "appointments", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -38,6 +38,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_09_081019) do
     t.string "emergency_ciudad"
     t.string "emergency_telefono"
     t.string "emergency_relacion"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "documento"
+    t.index ["documento"], name: "index_patients_on_documento", unique: true
+  end
+
+  create_table "retratamientos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
