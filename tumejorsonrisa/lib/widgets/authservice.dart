@@ -26,6 +26,7 @@ class AuthService {
         throw Exception('Error en la autenticación: ${response.reasonPhrase}');
       }
     } catch (e) {
+      // Manejo de errores de conexión y otros errores
       throw Exception('Error de conexión: $e');
     }
   }

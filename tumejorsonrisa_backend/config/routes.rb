@@ -1,12 +1,7 @@
 Rails.application.routes.draw do
   post 'login', to: 'auth#login'
   resources :patients
-  resources :appointments
+  resources :appointments, only: [:create, :index, :show, :update, :destroy]
   resources :xrays
-
-  # Opcional: Si quieres anidar recursos
-  # resources :patients do
-  #   resources :appointments
-  #   resources :xrays
-  # end
+  resources :retratamientos
 end

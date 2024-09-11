@@ -1,70 +1,57 @@
+class AppointmentsController < ApplicationController
+  before_action :set_appointment, only: %i[show update destroy]
 
-class PatientsController < ApplicationController
-    before_action :set_patient, only: %i[show update destroy]
+  def index
+    @appointments = Appointment.all
+    render json: @appointments
+  end
 
-    def index
-      @patients = Patient.all
-      render json: @patients
-    end
+  def show
+    render json: @appointment
+  end
 
-    def show
-      render json: @patient
-    end
-
-    def create
-      @patient = Patient.new(patient_params)
-      if @patient.save
-        render json: @patient, status: :created
-      else
-        render json: @patient.errors, status: :unprocessable_entity
-      end
-    end
-
-    def update
-      if @patient.update(patient_params)
-        render json: @patient
-      else
-        render json: @patient.errors, status: :unprocessable_entity
-      end
-    end
-  
-    def destroy
-      @patient.destroy
-      head :no_content
-    end
-  
-    private
-  
-    def set_patient
-      @patient = Patient.find(params[:id])
-    rescue ActiveRecord::RecordNotFound
-      render json: { error: 'Paciente no encontrado' }, status: :not_found
-    end
-  
-    def patient_params
-      params.require(:patient).permit(
-        :nombre,
-        :apellido,
-        :fecha_nacimiento,
-        :tipo_documento,
-        :numero_documento,
-        :direccion,
-        :ciudad,
-        :telefono,
-        :estado_civil,
-        :sexo,
-        :raza,
-        :tipo_sangre,
-        :ocupacion,
-        :eps,
-        :alergias,
-        :cirugias,
-        :emergency_nombre,
-        :emergency_direccion,
-        :emergency_ciudad,
-        :emergency_telefono,
-        :emergency_relacion
-      )
+  def create
+    @appointment = Appointment.new(appointment_params)
+    if @appointment.save
+      render json: @appointment, status: :created
+    else
+      render json: @appointment.errors, status: :unprocessable_entity
     end
   end
-  
+
+  def update
+    if @appointment.update(appointment_params)
+      render json: @appointment
+    else
+      render json: @appointment.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @appointment.destroy
+    head :no_content
+  end
+
+  private
+
+  def set_appointment
+    @appointment = Appointment.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Cita no encontrada' }, status: :not_found
+  end
+
+  def appointment_params
+    params.require(:appointment).permit(
+      :documento,
+      :nombre,
+      :apellido,
+      :telefono,
+      :email,
+      :doctor,
+      :fecha,
+      :hora,
+      :motivo,
+      :patient_id 
+    )
+  end
+end
