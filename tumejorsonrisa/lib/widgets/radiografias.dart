@@ -19,6 +19,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _tipoController = TextEditingController();
   DateTime? _fechaRadiografia;
+  final _formKey = GlobalKey<FormState>(); // Clave global para manejar el formulario
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
         throw Exception('Error al cargar radiografías');
       }
     } catch (e) {
-      print('Error al cargar radiografías: $e');
+      _showMessage('Error al cargar radiografías: $e');
     }
   }
 
@@ -51,8 +52,8 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
   }
 
   Future<void> _addRadiografia() async {
-    if (_selectedImage == null) {
-      print('Por favor, selecciona una imagen.');
+    if (!_formKey.currentState!.validate() || _selectedImage == null) {
+      _showMessage('Por favor, completa todos los campos y selecciona una imagen.');
       return;
     }
 
@@ -72,12 +73,13 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
 
       if (response.statusCode == 201) {
         _fetchRadiografias(); 
-        _resetForm(); 
+        _resetForm();
+        _showMessage('Radiografía agregada exitosamente.');
       } else {
         throw Exception('Error al agregar la radiografía');
       }
     } catch (e) {
-      print('Error al agregar radiografía: $e');
+      _showMessage('Error al agregar radiografía: $e');
     }
   }
 
@@ -88,6 +90,12 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
       _tipoController.clear();
       _fechaRadiografia = null;
     });
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -125,51 +133,77 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
               ),
             SizedBox(height: 20),
             Text('Agregar Nueva Radiografía', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            TextField(
-              controller: _descripcionController,
-              decoration: InputDecoration(labelText: 'Descripción'),
-            ),
-            TextField(
-              controller: _tipoController,
-              decoration: InputDecoration(labelText: 'Tipo de Radiografía'),
-            ),
-            GestureDetector(
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (pickedDate != null) {
-                  setState(() {
-                    _fechaRadiografia = pickedDate;
-                  });
-                }
-              },
-              child: AbsorbPointer(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Fecha de Radiografía',
-                    hintText: _fechaRadiografia != null ? _fechaRadiografia!.toLocal().toString().split(' ')[0] : 'Seleccionar fecha',
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _descripcionController,
+                    decoration: InputDecoration(labelText: 'Descripción'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa una descripción';
+                      }
+                      return null;
+                    },
                   ),
-                ),
+                  TextFormField(
+                    controller: _tipoController,
+                    decoration: InputDecoration(labelText: 'Tipo de Radiografía'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa el tipo de radiografía';
+                      }
+                      return null;
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          _fechaRadiografia = pickedDate;
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Fecha de Radiografía',
+                          hintText: _fechaRadiografia != null ? _fechaRadiografia!.toLocal().toString().split(' ')[0] : 'Seleccionar fecha',
+                        ),
+                        validator: (value) {
+                          if (_fechaRadiografia == null) {
+                            return 'Por favor selecciona una fecha';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _pickImage,
+                    child: Text('Seleccionar Imagen'),
+                  ),
+                  if (_selectedImage != null) 
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Image.file(_selectedImage!, width: 200, height: 200, fit: BoxFit.cover),
+                    ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _addRadiografia,
+                    child: Text('Montar Radiografía'),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: Text('Seleccionar Imagen'),
-            ),
-            if (_selectedImage != null) 
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Image.file(_selectedImage!, width: 200, height: 200, fit: BoxFit.cover),
-              ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _addRadiografia,
-              child: Text('Montar Radiografía'),
             ),
           ],
         ),

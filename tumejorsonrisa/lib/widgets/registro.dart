@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class RegistroPaciente extends StatefulWidget {
+  const RegistroPaciente({super.key});
+
   @override
   _RegistroPacienteState createState() => _RegistroPacienteState();
 }
@@ -66,14 +68,18 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
         );
 
         if (response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Paciente registrado con éxito')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Paciente registrado con éxito')),
+          );
           _formKey.currentState!.reset();
         } else {
           throw Exception('Failed to register paciente');
         }
       } catch (e) {
-        print('Error submitting form: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al registrar paciente')));
+        debugPrint('Error submitting form: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al registrar paciente')),
+        );
       }
     }
   }
@@ -82,7 +88,7 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro de Paciente'),
+        title: const Text('Registro de Paciente'),
         backgroundColor: Colors.blue, 
         elevation: 0,
       ),
@@ -118,35 +124,27 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
                 _buildTextField('Alergias', (value) => alergias = value, true, Icons.warning),
                 _buildTextField('Cirugías', (value) => cirugias = value, true, Icons.medical_services),
 
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   'Contacto de Emergencia',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade900,
+                    color: Colors.blue,
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 _buildTextField('Nombre y Apellido (Contacto de Emergencia)', (value) => _emergencyNombre = value!, true, Icons.person),
                 _buildTextField('Dirección (Contacto de Emergencia)', (value) => _emergencyDireccion = value!, true, Icons.home),
                 _buildTextField('Ciudad (Contacto de Emergencia)', (value) => _emergencyCiudad = value!, true, Icons.location_city),
                 _buildTextField('Número de Teléfono (Contacto de Emergencia)', (value) => _emergencyTelefono = value!, true, Icons.phone, TextInputType.phone),
-                _buildTextField('Relación (Contacto de Emergencia)', (value) => _emergencyRelacion = value!, false, Icons.family_restroom),
+                _buildTextField('Relación con el Paciente (Contacto de Emergencia)', (value) => _emergencyRelacion = value!, true, Icons.family_restroom),
 
-                SizedBox(height: 30),
+                const SizedBox(height: 20.0),
                 Center(
                   child: ElevatedButton(
                     onPressed: _submitForm,
-                    child: Text('Registrar'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
+                    child: const Text('Registrar Paciente'),
                   ),
                 ),
               ],
@@ -157,26 +155,57 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
     );
   }
 
-  Widget _buildTextField(String label, Function(String?) onSaved, bool required, [IconData? icon, TextInputType keyboardType = TextInputType.text]) {
+  Widget _buildTextField(String label, void Function(String?) onSaved, bool required, [IconData? icon, TextInputType keyboardType = TextInputType.text]) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: icon != null ? Icon(icon, color: Colors.blue) : null,
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide.none,
-          ),
+          prefixIcon: icon != null ? Icon(icon) : null,
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
         ),
         keyboardType: keyboardType,
-        onSaved: onSaved,
         validator: (value) {
           if (required && (value == null || value.isEmpty)) {
-            return 'Este campo es obligatorio';
+            return 'Por favor, ingrese $label.';
+          }
+          return null;
+        },
+        onSaved: onSaved,
+      ),
+    );
+  }
+
+  Widget _buildDatePicker(String label, void Function(DateTime?) onSaved, bool required, IconData? icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: _fechaNacimientoController,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: icon != null ? Icon(icon) : null,
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        ),
+        onTap: () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          final DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+          );
+          if (picked != null) {
+            setState(() {
+              _fechaNacimientoController.text = "${picked.toLocal()}".split(' ')[0];
+              onSaved(picked);
+            });
+          }
+        },
+        validator: (value) {
+          if (required && (value == null || value.isEmpty)) {
+            return 'Por favor, seleccione $label.';
           }
           return null;
         },
@@ -184,78 +213,28 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
     );
   }
 
-  Widget _buildDropdown(String label, List<String> items, Function(String?) onChanged, [bool required = false]) {
-    String? selectedValue;
+  Widget _buildDropdown(String label, List<String> items, void Function(String?) onChanged, bool required) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: label,
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide.none,
-          ),
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
         ),
-        value: selectedValue,
-        items: items.map((String item) {
+        items: items.map((String value) {
           return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
+            value: value,
+            child: Text(value),
           );
         }).toList(),
-        onChanged: (value) {
-          setState(() {
-            selectedValue = value;
-          });
-          onChanged(value);
-        },
-        validator: required 
-            ? (value) => (value == null) ? 'Este campo es obligatorio' : null 
-            : null,
-      ),
-    );
-  }
-
-  Widget _buildDatePicker(String label, Function(DateTime?) onSaved, bool required, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: GestureDetector(
-        onTap: () async {
-          DateTime? pickedDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(1900),
-            lastDate: DateTime.now(),
-          );
-          if (pickedDate != null) {
-            setState(() {
-              fechaNacimiento = pickedDate;
-              _fechaNacimientoController.text = pickedDate.toLocal().toString().split(' ')[0];
-            });
-            onSaved(pickedDate);
+        onChanged: onChanged,
+        validator: (value) {
+          if (required && (value == null || value.isEmpty)) {
+            return 'Por favor, seleccione $label.';
           }
+          return null;
         },
-        child: AbsorbPointer(
-          child: TextFormField(
-            controller: _fechaNacimientoController,
-            decoration: InputDecoration(
-              labelText: label,
-              hintText: 'Seleccionar fecha',
-              prefixIcon: Icon(icon, color: Colors.blue),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            validator: (value) => required && (fechaNacimiento == null) ? 'Este campo es obligatorio' : null,
-          ),
-        ),
       ),
     );
   }

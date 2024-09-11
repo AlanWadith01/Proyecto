@@ -20,6 +20,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
   String? _selectedDoctor;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  bool _isLoading = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -48,6 +49,9 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
   }
 
   Future<void> _autofillContactInfo(String documento) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
       if (response.statusCode == 200) {
@@ -68,6 +72,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar información del paciente')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -92,6 +100,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
         'doctor': _selectedDoctor,
       };
 
+      setState(() {
+        _isLoading = true;
+      });
+
       try {
         final response = await http.post(
           Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/retratamientos'),
@@ -114,6 +126,10 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error de conexión')),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -125,208 +141,223 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
         title: Text('Programación de Retratamientos'),
         backgroundColor: Colors.blueAccent,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _documentoController,
-                      decoration: InputDecoration(
-                        labelText: 'Número de Documento',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0), 
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _documentoController,
+                          decoration: InputDecoration(
+                            labelText: 'Número de Documento',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingrese el número de documento';
+                            }
+                            return null;
+                          },
                         ),
-                        filled: true,
-                        fillColor: Colors.white,
                       ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingrese el número de documento';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _searchPatient,
-                    child: Text('Buscar'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,  
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),  
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _nombreController,
-                decoration: InputDecoration(
-                  labelText: 'Nombre',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), 
-                  ),
-                  filled: true,
-                  fillColor: Colors.white, 
-                ),
-                enabled: false,
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _apellidoController,
-                decoration: InputDecoration(
-                  labelText: 'Apellido',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,  
-                ),
-                enabled: false,
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _telefonoController,
-                decoration: InputDecoration(
-                  labelText: 'Número de Teléfono',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), 
-                  ),
-                  filled: true,
-                  fillColor: Colors.white, 
-                ),
-                keyboardType: TextInputType.phone,
-                enabled: false,
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Correo Electrónico',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), 
-                  ),
-                  filled: true,
-                  fillColor: Colors.white, 
-                ),
-                keyboardType: TextInputType.emailAddress,
-                enabled: false,
-              ),
-              SizedBox(height: 16.0),
-              DropdownButtonFormField<String>(
-                value: _selectedDoctor,
-                hint: Text('Doctor encargado'),
-                items: [
-                  DropdownMenuItem(
-                    child: Text('Dra. Natalia Muñoz'),
-                    value: 'dra_natalia',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Dr. Oscar Perez'),
-                    value: 'dr_oscar',
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedDoctor = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Por favor seleccione un doctor';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), 
-                  ),
-                  filled: true,
-                  fillColor: Colors.white, 
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Text('Fecha de la Cita:'),
-                  SizedBox(width: 8),
-                  Text(_selectedDate == null
-                      ? 'No seleccionada'
-                      : '${_selectedDate!.toLocal()}'.split(' ')[0]),
-                  IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Text('Hora de la Cita:'),
-                  SizedBox(width: 8),
-                  Text(_selectedTime == null
-                      ? 'No seleccionada'
-                      : _selectedTime!.format(context)),
-                  IconButton(
-                    icon: Icon(Icons.access_time),
-                    onPressed: () => _selectTime(context),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Detalles',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: _motivoController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0), 
+                      SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: _searchPatient,
+                        child: Text('Buscar'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
-                        filled: true,
-                        fillColor: Colors.white, 
                       ),
-                      maxLines: 12,
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _nombreController,
+                    decoration: InputDecoration(
+                      labelText: 'Nombre',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: _scheduleRetratamiento,
-                    child: Text('Programar Retratamiento'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,  
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),  
+                    enabled: false,
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _apellidoController,
+                    decoration: InputDecoration(
+                      labelText: 'Apellido',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    enabled: false,
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _telefonoController,
+                    decoration: InputDecoration(
+                      labelText: 'Número de Teléfono',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    keyboardType: TextInputType.phone,
+                    enabled: false,
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Correo Electrónico',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    enabled: false,
+                  ),
+                  SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: _selectedDoctor,
+                    hint: Text('Doctor encargado'),
+                    items: [
+                      DropdownMenuItem(
+                        child: Text('Dra. Natalia Muñoz'),
+                        value: 'dra_natalia',
+                      ),
+                      DropdownMenuItem(
+                        child: Text('Dr. Oscar Perez'),
+                        value: 'dr_oscar',
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedDoctor = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Por favor seleccione un doctor';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    children: [
+                      Text('Fecha de la Cita:'),
+                      SizedBox(width: 8),
+                      Text(_selectedDate == null
+                          ? 'No seleccionada'
+                          : '${_selectedDate!.toLocal()}'.split(' ')[0]),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () => _selectDate(context),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    children: [
+                      Text('Hora de la Cita:'),
+                      SizedBox(width: 8),
+                      Text(_selectedTime == null
+                          ? 'No seleccionada'
+                          : _selectedTime!.format(context)),
+                      IconButton(
+                        icon: Icon(Icons.access_time),
+                        onPressed: () => _selectTime(context),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Detalles',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: _motivoController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          maxLines: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: _scheduleRetratamiento,
+                        child: _isLoading
+                            ? CircularProgressIndicator()
+                            : Text('Programar Retratamiento'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            Center(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
