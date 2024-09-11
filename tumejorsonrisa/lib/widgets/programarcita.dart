@@ -48,29 +48,87 @@ class _ProgramarcitaState extends State<Programarcita> {
     }
   }
 
-  Future<void> _autofillContactInfo(String documento) async {
+  Future<void> _autofillContactInfo(String numero_documento) async {
+  setState(() {
+    _isLoading = true;
+  });
+  try {
+    final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients/$numero_documento'));
+    if (response.statusCode == 200) {
+      final paciente = json.decode(response.body);
+      setState(() {
+        _nombreController.text = paciente['nombre']; 
+        _apellidoController.text = paciente['apellido'];
+        _telefonoController.text = paciente['telefono'];
+        _emailController.text = paciente['email'];
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se encontró información para el documento ingresado')),
+      );
+    }
+  } catch (e) {
+    print('Error al autocompletar: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al cargar la información del paciente')),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+void _searchPatient() {
+  final numero_documento = _documentoController.text;
+  if (numero_documento.isNotEmpty) {
+    _autofillContactInfo(numero_documento); 
+  }
+}
+
+
+  Future<void> _programarCita() async {
+  if (_formKey.currentState!.validate()) {
     setState(() {
       _isLoading = true;
     });
+
+    final cita = {
+      'documento': _documentoController.text,
+      'telefono': _telefonoController.text,
+      'email': _emailController.text,
+      'nombre': _nombreController.text,
+      'apellido': _apellidoController.text,
+      'doctor': _selectedDoctor ?? '',
+      'fecha': _selectedDate?.toIso8601String() ?? '',
+      'hora': _selectedTime?.format(context) ?? '',
+      'motivo': _motivoController.text,
+    };
+
     try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
-      if (response.statusCode == 200) {
-        final paciente = json.decode(response.body);
-        setState(() {
-          _nombreController.text = paciente['nombres'];
-          _apellidoController.text = paciente['apellidos'];
-          _telefonoController.text = paciente['telefono'];
-          _emailController.text = paciente['email'];
-        });
+      final url = Uri.parse('https://c121-191-95-19-112.ngrok-free.app/appointments');
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(cita),
+      );
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Cita programada exitosamente')),
+        );
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No se encontró información para el documento ingresado')),
+          SnackBar(content: Text('Error al programar la cita: ${response.body}')),
         );
       }
     } catch (e) {
-      print('Error al autocompletar: $e');
+      print('Error al programar la cita: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar la información del paciente')),
+        SnackBar(content: Text('Error en la conexión')),
       );
     } finally {
       setState(() {
@@ -78,64 +136,8 @@ class _ProgramarcitaState extends State<Programarcita> {
       });
     }
   }
+}
 
-  void _searchPatient() {
-    final documento = _documentoController.text;
-    if (documento.isNotEmpty) {
-      _autofillContactInfo(documento);
-    }
-  }
-
-  Future<void> _programarCita() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final cita = {
-        'documento': _documentoController.text,
-        'telefono': _telefonoController.text,
-        'email': _emailController.text,
-        'nombre': _nombreController.text,
-        'apellido': _apellidoController.text,
-        'doctor': _selectedDoctor ?? '',
-        'fecha': _selectedDate?.toIso8601String() ?? '',
-        'hora': _selectedTime?.format(context) ?? '',
-        'motivo': _motivoController.text,
-      };
-
-      try {
-        final url = Uri.parse('http://<tu-servidor-rails.com>/api/appointments');
-        final response = await http.post(
-          url,
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(cita),
-        );
-
-        if (response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Cita programada exitosamente')),
-          );
-          Navigator.pop(context);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al programar la cita')),
-          );
-        }
-      } catch (e) {
-        print('Error al programar la cita: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error en la conexión')),
-        );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
   bool _isLoadingPaciente = false;
   bool _isLoadingHistorial = false;
 
-  final String _baseUrl = 'https://f43e-191-95-23-42.ngrok-free.app/'; // Ajusta según corresponda
+  final String _baseUrl = 'https://c121-191-95-19-112.ngrok-free.app/';
 
   Future<void> _obtenerDatosPaciente() async {
     final documento = _documentoController.text;
@@ -29,7 +29,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
       _email = '';
     });
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/paciente/$documento')); // Ajusta el endpoint
+      final response = await http.get(Uri.parse('$_baseUrl/paciente/$documento'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -56,7 +56,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
     final documento = _documentoController.text;
     setState(() => _isLoadingHistorial = true);
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/historial/$documento')); // Ajusta el endpoint
+      final response = await http.get(Uri.parse('$_baseUrl/historial/$documento'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {

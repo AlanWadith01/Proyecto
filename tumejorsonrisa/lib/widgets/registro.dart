@@ -60,7 +60,7 @@ class _RegistroPacienteState extends State<RegistroPaciente> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patiens'),
+          Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patiens'),
           headers: {
             'Content-Type': 'application/json',
           },

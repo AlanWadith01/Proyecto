@@ -19,7 +19,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _tipoController = TextEditingController();
   DateTime? _fechaRadiografia;
-  final _formKey = GlobalKey<FormState>(); // Clave global para manejar el formulario
+  final _formKey = GlobalKey<FormState>(); 
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
 
   Future<void> _fetchRadiografias() async {
     try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/${widget.pacienteId}/radiografias'));
+      final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/${widget.pacienteId}/radiografias'));
       if (response.statusCode == 200) {
         setState(() {
           radiografias = json.decode(response.body);
@@ -59,7 +59,7 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/${widget.pacienteId}/radiografias'),
+      Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients/${widget.pacienteId}/radiografias'),
     );
 
     request.fields['descripcion'] = _descripcionController.text;

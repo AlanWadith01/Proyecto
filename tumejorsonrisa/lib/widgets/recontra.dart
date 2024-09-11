@@ -12,7 +12,7 @@ class RecoverPasswordPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Imagen de fondo con ShaderMask para aplicar color y opacidad
+
           ShaderMask(
             shaderCallback: (bounds) => LinearGradient(
               colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.7)],
@@ -86,7 +86,7 @@ class RecoverPasswordPage extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // Aquí agregas la lógica para enviar el correo electrónico
+
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text('Correo enviado. Verifique su bandeja de entrada.')),
                                   );

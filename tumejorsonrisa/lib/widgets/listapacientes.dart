@@ -26,7 +26,7 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
       errorMessage = '';
     });
     try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients'));
+      final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients'));
       if (response.statusCode == 200) {
         setState(() {
           pacientes = json.decode(response.body);

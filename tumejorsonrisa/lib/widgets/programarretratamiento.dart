@@ -48,12 +48,12 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
     }
   }
 
-  Future<void> _autofillContactInfo(String documento) async {
+  Future<void> _autofillContactInfo(String numero_documento) async {
     setState(() {
       _isLoading = true;
     });
     try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
+      final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients/$numero_documento'));
       if (response.statusCode == 200) {
         final paciente = json.decode(response.body);
         setState(() {
@@ -80,9 +80,9 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
   }
 
   void _searchPatient() {
-    final documento = _documentoController.text;
-    if (documento.isNotEmpty) {
-      _autofillContactInfo(documento);
+    final numero_documento = _documentoController.text;
+    if (numero_documento.isNotEmpty) {
+      _autofillContactInfo(numero_documento);
     }
   }
 
@@ -106,7 +106,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/retratamientos'),
+          Uri.parse('https://c121-191-95-19-112.ngrok-free.app/retratamientos'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(retratamiento),
         );

@@ -22,7 +22,6 @@ class _EditarPacientePageState extends State<EditarPacientePage> {
   @override
   void initState() {
     super.initState();
-    // Inicializa los controladores con los valores actuales del paciente
     _nombreController = TextEditingController(text: widget.paciente['nombre']);
     _apellidoController = TextEditingController(text: widget.paciente['apellido']);
     _telefonoController = TextEditingController(text: widget.paciente['telefono']);
@@ -31,7 +30,6 @@ class _EditarPacientePageState extends State<EditarPacientePage> {
 
   @override
   void dispose() {
-    // Limpia los controladores cuando se destruye el widget
     _nombreController.dispose();
     _apellidoController.dispose();
     _telefonoController.dispose();
@@ -42,7 +40,7 @@ class _EditarPacientePageState extends State<EditarPacientePage> {
   Future<void> _actualizarPaciente() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final url = Uri.parse('http://<tu-servidor-rails.com>/api/patients/${widget.paciente['id']}');
+        final url = Uri.parse('https://c121-191-95-19-112.ngrok-free.app/api/patients/${widget.paciente['id']}');
         final response = await http.put(
           url,
           headers: <String, String>{

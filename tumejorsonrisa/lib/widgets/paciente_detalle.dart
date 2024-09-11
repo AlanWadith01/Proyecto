@@ -46,7 +46,7 @@ class PacienteDetallePage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Acción para editar la información
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(

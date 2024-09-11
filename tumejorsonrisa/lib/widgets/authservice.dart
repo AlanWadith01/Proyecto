@@ -7,7 +7,7 @@ class AuthService {
   AuthService(this.baseUrl);
 
   Future<bool> login(String username, String password) async {
-    final url = Uri.parse('$baseUrl/login');
+    final url = Uri.parse('https://c121-191-95-19-112.ngrok-free.app/login');
     
     try {
       final response = await http.post(
@@ -26,7 +26,7 @@ class AuthService {
         throw Exception('Error en la autenticación: ${response.reasonPhrase}');
       }
     } catch (e) {
-      // Manejo de errores de conexión y otros errores
+
       throw Exception('Error de conexión: $e');
     }
   }
