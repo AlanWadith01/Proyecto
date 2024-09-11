@@ -5,196 +5,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Paciente</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-section { margin-bottom: 30px; }
+        .form-section h2 { font-size: 24px; font-weight: bold; }
+        .error-message { color: red; }
+    </style>
 </head>
-<style>
-    body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    text-align: center;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-input[type="text"],
-input[type="tel"],
-input[type="date"],
-select,
-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 16px;
-    color: #333;
-}
-
-textarea {
-    resize: vertical;
-}
-
-button[type="submit"] {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-.center {
-    text-align: center;
-}
-</style>
 <body>
+    <div class="container mt-5">
+        <h1 class="text-center">Registro de Paciente</h1>
+        
+         <% 
+            // Mostrar mensaje de éxito o error basado en el parámetro de la solicitud
+            String successMessage = request.getParameter("success");
+            String errorMessage = request.getParameter("error");
+        %>
 
-    <div class="container">
-        <center><h1>REGISTRO DE PACIENTE</h1></center>
-        <form method="post" action="#">
-            <div class="form-group">
-                <label for="numero_identidad">Número de Identidad:</label>
-                <input type="text" id="numero_identidad" name="numero_identidad" required>
+        <% if ("true".equals(successMessage)) { %>
+            <div class="alert alert-success text-center">
+                <strong>¡Registro exitoso! El Paciente se ha registrado correctamente.</strong>
             </div>
-            <div class="form-group">
-                <label for="nombre_paciente">Nombre:</label>
-                <input type="text" id="nombre_paciente" name="nombre_paciente" required>
+        <% } else if ("true".equals(errorMessage)) { %>
+            <div class="alert alert-danger text-center">
+                <strong>Error al registrar el Paciente. Verifique los datos e intente nuevamente.</strong>
             </div>
-            <div class="form-group">
-                <label for="apellido_paciente">Apellido:</label>
-                <input type="text" id="apellido_paciente" name="apellido_paciente" required>
+        
+        <% } else if ("missingId".equals(request.getParameter("error"))) { %>
+            <div class="alert alert-danger text-center">
+                <strong>El ID es obligatorio. Por favor, ingréselo.</strong>
             </div>
-            <div class="form-group">
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" name="direccion">
+        <% } %>
+
+        
+        <form id="registroPaciente" action="/proyectotumejor/CtrPaciente" method="POST" onsubmit="return validateForm()>
+            <input type="hidden" name="accion" value="Registrar">
+            <div class="form-section">
+                <h2>Datos del Paciente</h2>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" class="form-control" id="apellido" name="apellido" required>
+                </div>
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+                </div>
+                                <div class="form-group">
+                    <label for="edad">Edad</label>
+                    <input type="text" class="form-control" id="edad" name="edad" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipoDocumento">Tipo de Documento</label>
+                    <select class="form-control" id="tipoDocumento" name="tipoDocumento" required>
+                        <option value="" disabled selected>Seleccione un tipo</option>
+                        <option value="Cédula Ciudadanía">Cédula Ciudadanía</option>
+                        <option value="Tarjeta De Identidad">Tarjeta De Identidad</option>
+                        <option value="Cédula Extranjera">Cédula Extranjera</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="numeroDocumento">Número de Documento</label>
+                    <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" required pattern="\d+" title="Solo se permiten números">
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" class="form-control" id="direccion" name="direccion" required>
+                </div>
+                <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Número de Teléfono</label>
+                    <input type="tel" class="form-control" id="telefono" name="telefono" required pattern="\d{10}" title="Número de teléfono debe tener 10 dígitos">
+                </div>
+                <div class="form-group">
+                    <label for="estadoCivil">Estado Civil</label>
+                    <select class="form-control" id="estadoCivil" name="estadoCivil" required>
+                        <option value="" disabled selected>Seleccione un estado</option>
+                        <option value="Soltero/a">Soltero/a</option>
+                        <option value="Casado/a">Casado/a</option>
+                        <option value="Viudo/a">Viudo/a</option>
+                        <option value="Divorciado/a">Divorciado/a</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sexo">Sexo</label>
+                    <select class="form-control" id="sexo" name="sexo" required>
+                        <option value="" disabled selected>Seleccione un sexo</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="raza">Raza Étnica</label>
+                    <select class="form-control" id="raza" name="raza" required>
+                        <option value="" disabled selected>Seleccione una raza</option>
+                        <option value="Mestizo">Mestizo</option>
+                        <option value="Blanco">Blanco</option>
+                        <option value="Afrodescendiente">Afrodescendiente</option>
+                        <option value="Indígena">Indígena</option>
+                        <option value="Mulato">Mulato</option>
+                        <option value="Asiático">Asiático</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tipoSangre">Tipo de Sangre</label>
+                    <select class="form-control" id="tipoSangre" name="tipoSangre" required>
+                        <option value="" disabled selected>Seleccione un tipo</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ocupacion">Ocupación</label>
+                    <input type="text" class="form-control" id="ocupacion" name="ocupacion">
+                </div>
+                <div class="form-group">
+                    <label for="eps">EPS</label>
+                    <input type="text" class="form-control" id="eps" name="eps">
+                </div>
+                <div class="form-group">
+                    <label for="alergias">Alergias</label>
+                    <textarea class="form-control" id="alergias" name="alergias" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="cirugias">Cirugías</label>
+                    <textarea class="form-control" id="cirugias" name="cirugias" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <textarea class="form-control" id="email" name="email"></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="ciudad">Ciudad:</label>
-                <input type="text" id="ciudad" name="ciudad">
+            <div class="form-section">
+                <h2>Contacto de Emergencia</h2>
+                <div class="form-group">
+                    <label for="emergencyNombre">Nombre y Apellido</label>
+                    <input type="text" class="form-control" id="emergencyNombre" name="emergencyNombre" required>
+                </div>
+                 <div class="form-group">
+                    <label for="emergencyApellido">Nombre y Apellido</label>
+                    <input type="text" class="form-control" id="emergencyApellido" name="emergencyApellido" required>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyDireccion">Dirección</label>
+                    <input type="text" class="form-control" id="emergencyDireccion" name="emergencyDireccion" required>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyCiudad">Ciudad</label>
+                    <input type="text" class="form-control" id="emergencyCiudad" name="emergencyCiudad" required>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyTelefono">Número de Teléfono</label>
+                    <input type="tel" class="form-control" id="emergencyTelefono" name="emergencyTelefono" required>
+                </div>
+                <div class="form-group">
+                    <label for="emergencyRelacion">Relación</label>
+                    <input type="text" class="form-control" id="emergencyRelacion" name="emergencyRelacion">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="telefono">Número de Teléfono:</label>
-                <input type="tel" id="telefono" name="telefono">
-            </div>
-            <div class="form-group">
-                <label for="estado_civil">Estado Civil:</label>
-                <select id="estado_civil" name="estado_civil">
-                    <option value="soltero">Soltero/a</option>
-                    <option value="casado">Casado/a</option>
-                    <option value="viudo">Viudo/a</option>
-                    <option value="divorciado">Divorciado/a</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="sexo">Sexo:</label>
-                <select id="sexo" name="sexo">
-                    <option value="masculino">Masculino</option>
-                    <option value="femenino">Femenino</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="raza">Raza Étnica:</label>
-                <select id="raza" name="raza">
-                    <option value="mestizo">Mestizo</option>
-                    <option value="blanco">Blanco</option>
-                    <option value="afrodescendiente">Afrodescendiente</option>
-                    <option value="indigena">Indígena</option>
-                    <option value="mulato">Mulato</option>
-                    <option value="asiatico">Asiático</option>
-                    <option value="otro">Otro</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="tipo_sangre">Tipo de Sangre:</label>
-                <select id="tipo_sangre" name="tipo_sangre">
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="ocupacion">Ocupación:</label>
-                <input type="text" id="ocupacion" name="ocupacion">
-            </div>
-            <div class="form-group">
-                <label for="eps">EPS:</label>
-                <input type="text" id="eps" name="eps">
-            </div>
-            <div class="form-group">
-                <label for="alergias">Alergias:</label>
-                <textarea id="alergias" name="alergias" rows="4"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="cirugias">Cirugías:</label>
-                <textarea id="cirugias" name="cirugias" rows="4"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
-            </div>
-            <h2>Contacto de Emergencia</h2>
-            <div class="form-group">
-                <label for="nombre_contacto">Nombre y Apellido:</label>
-                <input type="text" id="nombre_contacto" name="nombre_contacto" required>
-            </div>
-            <div class="form-group">
-                <label for="direccion_contacto">Dirección:</label>
-                <input type="text" id="direccion_contacto" name="direccion_contacto">
-            </div>
-            <div class="form-group">
-                <label for="ciudad_contacto">Ciudad:</label>
-                <input type="text" id="ciudad_contacto" name="ciudad_contacto">
-            </div>
-            <div class="form-group">
-                <label for="telefono_contacto">Número de Teléfono:</label>
-                <input type="tel" id="telefono_contacto" name="telefono_contacto" required>
-            </div>
-            <div class="form-group">
-                <label for="relacion_contacto">Relación:</label>
-                <input type="text" id="relacion_contacto" name="relacion_contacto">
-            </div>
-            <div class="form-group">
-                <center><button type="submit">Registrar</button></center>
-            </div>
-            <div class="form-group">
-                <center><button type="submit">Editar Informacion</button></center>
-            </div>
+            <center>
+    <a href="/proyectotumejor/vistas/acceso.jsp" class="btn btn-secondary btn-block">Cancelar</a>
+    <input type="submit" name="accion" value="Registrar" class="btn btn-primary btn-block">
+</center>
         </form>
     </div>
-    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

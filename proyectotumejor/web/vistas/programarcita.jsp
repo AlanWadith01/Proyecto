@@ -1,132 +1,145 @@
-<%-- 
-    Document   : programarcita
-    Created on : 23/08/2024, 08:38:23 AM
-    Author     : SENA
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programación de Citas Médicas</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Programar Cita</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .disabled-input {
+            background-color: #f5f5f5;
+        }
+        .form-control:disabled {
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
-<style>
-    body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 30px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-input[type="text"],
-input[type="tel"],
-input[type="email"],
-input[type="date"],
-input[type="time"],
-select,
-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 16px;
-    color: #333;
-}
-
-textarea {
-    resize: vertical;
-}
-
-button[type="submit"] {
-    background-color:  #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-}
-
-button[type="submit"]:hover {
-    background-color:  #007bff;
-}
-
-.center {
-    text-align: center;
-}
-</style>
 <body>
-    <div class="container">
-        <h1>Programación de Citas </h1>
-        <form action="#" method="post">
+    <div class="container mt-5">
+        <h2>Programar Cita</h2>
+        <form id="reportForm" method="post" action="/proyectotumejor/CtrCitas" onsubmit="return validarFormulario()"> 
             <div class="form-group">
-                <label for="nombre">Nombre del Paciente:</label>
-                <input type="text" id="nombre" name="nombre" required>
+                <label for="idpac">Número de Documento</label>
+                <input type="text" class="form-control" id="idpac" name="idpac" placeholder="Ingrese el número de documento" onkeyup="buscarPaciente()" required>
             </div>
             <div class="form-group">
-                <label for="telefono">Número de Teléfono:</label>
-                <input type="tel" id="telefono" name="telefono" required>
+                <label for="nombrepac">Nombre paciente</label>
+                <input type="text" class="form-control" id="nombrepac" name="nombrepac" placeholder="Nombre paciente" required>
             </div>
             <div class="form-group">
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" id="email" name="email">
+                <label for="apepac">Apellido paciente</label>
+                <input type="text" class="form-control" id="apepac" name="apepac" placeholder="Apellido paciente" required>
             </div>
             <div class="form-group">
-                <label for="doctor">Doctor:</label>
-                <select id="doctor" name="doctor" required>
-                    <option value="">Seleccione un doctor</option>
-                    <option value="dr_jose">Dr. José Martínez</option>
+                <label for="odontologo">Seleccione un Doctor</label>
+                <select class="form-control" id="odontologo" name="odontologo" required>
+                    <option value="" disabled selected>Seleccione un doctor</option>
+                    <option value="98765421">Dr. Katryn Gonzalez</option>
                     <option value="dr_ana">Dra. Ana Gómez</option>
                     <option value="dr_carlos">Dr. Carlos Rodríguez</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="fecha">Fecha de la Cita:</label>
-                <input type="date" id="fecha" name="fecha" required>
+                <label for="fechacit">Fecha de la Cita:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="fechacit" name="fechacit" placeholder="No seleccionada" disabled>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="selectDate">Seleccionar Fecha</button>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <label for="hora">Hora de la Cita:</label>
-                <input type="time" id="hora" name="hora" required>
+                <label for="horacit">Hora de la Cita:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="horacit" name="horacit" placeholder="No seleccionada" disabled>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="selectTime">Seleccionar Hora</button>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <label for="motivo">Motivo de la Cita:</label>
-                <textarea id="motivo" name="motivo" rows="4"></textarea>
+                <label for="motivo">Motivo de la Cita</label>
+                <textarea class="form-control" id="motivo" name="motivo" rows="4" placeholder="Ingrese el motivo de la cita" required></textarea>
             </div>
-            <div class="form-group center">
-                <button type="submit">Programar Cita</button>
-            </div>
+            <center>
+                <a href="/proyectotumejor/vistas/acceso.jsp" class="btn btn-secondary btn-block">Cancelar Cita</a>
+                <input type="submit" name="accion" value="Generar" class="btn btn-primary btn-block">
+            </center> 
         </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        document.getElementById('selectDate').addEventListener('click', function() {
+            const selectedDate = prompt("Ingrese la fecha de la cita (YYYY-MM-DD):");
+            if (selectedDate) {
+                document.getElementById('fechacit').value = selectedDate;
+                document.getElementById('fechacit').disabled = false; // Enable the input after selection
+            }
+        });
+
+        document.getElementById('selectTime').addEventListener('click', function() {
+            const selectedTime = prompt("Ingrese la hora de la cita (HH:MM):");
+            if (selectedTime) {
+                document.getElementById('horacit').value = selectedTime;
+                document.getElementById('horacit').disabled = false; // Enable the input after selection
+            }
+        });
+
+        function buscarPaciente() {
+            var idPaciente = document.getElementById("idpac").value;
+            if (idPaciente.length === 0) {
+                document.getElementById("nombrepac").value = '';
+                document.getElementById("apepac").value = '';
+                return; // Si no hay ID, limpiar los campos y salir
+            }
+
+            // Crear una instancia de XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/proyectotumejor/CtrPaciente?accion=buscaridpac&idpac=" + idPaciente, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var paciente = JSON.parse(xhr.responseText);
+                    if (paciente) {
+                        document.getElementById("nombrepac").value = paciente.nombre;
+                        document.getElementById("apepac").value = paciente.apellido;
+                    } else {
+                        document.getElementById("nombrepac").value = '';
+                        document.getElementById("apepac").value = '';
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function validarFormulario() {
+            // Obtener los valores de los campos
+            var idpac = document.getElementById("idpac").value.trim();
+            var nombrepac = document.getElementById("nombrepac").value.trim();
+            var apepac = document.getElementById("apepac").value.trim();
+            var odontologo = document.getElementById("odontologo").value;
+            var fechacit = document.getElementById("fechacit").value.trim();
+            var horacit = document.getElementById("horacit").value.trim();
+            var motivo = document.getElementById("motivo").value.trim();
+
+            // Verificar si los campos obligatorios están vacíos
+            if (!idpac || !nombrepac || !apepac || !odontologo || !motivo) {
+                alert("Por favor, complete todos los campos obligatorios.");
+                return false; // Evitar el envío del formulario
+            }
+
+            // Si se requiere validar la fecha y la hora, puedes descomentar las siguientes líneas
+            // if (!fechacit || !horacit) {
+            //     alert("Por favor, seleccione la fecha y la hora de la cita.");
+            //     return false; // Evitar el envío del formulario
+            // }
+
+            return true; // Permitir el envío del formulario
+        }
+    </script>
 </body>
 </html>
