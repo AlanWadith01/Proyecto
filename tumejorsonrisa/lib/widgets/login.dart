@@ -13,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthService _authService = AuthService('https://f43e-191-95-23-42.ngrok-free.app'); // Reemplaza con tu URL
+  final AuthService _authService = AuthService('https://c121-191-95-19-112.ngrok-free.app/');
 
   bool _isLoading = false;
 

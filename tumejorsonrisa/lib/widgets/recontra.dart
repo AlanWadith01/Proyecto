@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RecoverPasswordPage extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,20 +12,20 @@ class RecoverPasswordPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Imagen de fondo
-          Image.asset(
-            "lib/images/fondo.jpg",
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+          ShaderMask(
+            shaderCallback: (bounds) => LinearGradient(
+              colors: [Colors.black.withOpacity(0.7), Colors.black.withOpacity(0.7)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ).createShader(bounds),
+            blendMode: BlendMode.darken,
+            child: Image.asset(
+              "lib/images/fondo.jpg",
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
           ),
-          // Capa de color con opacidad
-          Container(
-            color: Colors.black.withOpacity(0.5),
-            width: double.infinity,
-            height: double.infinity,
-          ),
-          // Contenido principal
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
@@ -53,10 +56,12 @@ class RecoverPasswordPage extends StatelessWidget {
                       ),
                       SizedBox(height: 16),
                       Form(
+                        key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             TextFormField(
+                              controller: _emailController,
                               decoration: InputDecoration(
                                 labelText: 'Correo electrónico',
                                 hintText: 'm@example.com',
@@ -79,8 +84,14 @@ class RecoverPasswordPage extends StatelessWidget {
                             SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Correo enviado. Verifique su bandeja de entrada.')),
+                                  );
+                                }
                               },
-                              child: Text('Enviar correo electronico'),
+                              child: Text('Enviar correo electrónico'),
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(vertical: 16),
                               ),

@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'fecha': item['fecha']?.toString() ?? '',
             'hora': item['hora']?.toString() ?? '',
             'descripcion': item['descripcion']?.toString() ?? '',
-            'retratamientoPendiente': item['retratamientoPendiente']?.toString() ?? 'No'
+            'retratamientoPendiente': item['retratamientoPendiente']?.toString() ?? 'No',
           }).toList();
         });
       } else {
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   enabled: false,
                   decoration: InputDecoration(
                     hintText: 'Cerrar sesión',
-                    hintStyle: TextStyle(color: Colors.black),
+                    hintStyle: TextStyle(color: Colors.white),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
                   ),
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(builder: (context) => ListaPacientesPage()),
                     );
-                  }, fontSize: 13),
+                  }),
                 ),
                 SizedBox(width: 16),
                 Expanded(
@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(builder: (context) => RegistroPaciente()),
                     );
-                  }, fontSize: 13),
+                  }),
                 ),
               ],
             ),

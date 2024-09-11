@@ -18,7 +18,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
   bool _isLoadingPaciente = false;
   bool _isLoadingHistorial = false;
 
-  final String _baseUrl = 'https://f43e-191-95-23-42.ngrok-free.app/'; 
+  final String _baseUrl = 'https://f43e-191-95-23-42.ngrok-free.app/'; // Ajusta según corresponda
 
   Future<void> _obtenerDatosPaciente() async {
     final documento = _documentoController.text;
@@ -29,8 +29,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
       _email = '';
     });
     try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/$documento'));
-
+      final response = await http.get(Uri.parse('$_baseUrl/paciente/$documento')); // Ajusta el endpoint
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -57,8 +56,7 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
     final documento = _documentoController.text;
     setState(() => _isLoadingHistorial = true);
     try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/$documento'));
-
+      final response = await http.get(Uri.parse('$_baseUrl/historial/$documento')); // Ajusta el endpoint
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -170,7 +168,9 @@ class _GenerarHistorialClinicoPageState extends State<GenerarHistorialClinicoPag
                   Text('Correo Electrónico: $_email', style: TextStyle(fontSize: 16.0)),
                   SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _obtenerHistorialClinico,
+                    onPressed: _isLoadingPaciente || _documentoController.text.isEmpty
+                        ? null
+                        : _obtenerHistorialClinico,
                     child: _isLoadingHistorial
                         ? CircularProgressIndicator(color: Colors.white)
                         : Text('Obtener Historial Clínico'),
