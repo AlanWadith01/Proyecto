@@ -1,9 +1,3 @@
-<%-- 
-    Document   : registroOdontologo
-    Created on : 28/08/2024, 03:39:54 PM
-    Author     : SENA
---%>
-
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -14,36 +8,48 @@
         .form-section { margin-bottom: 30px; }
         .form-section h2 { font-size: 24px; font-weight: bold; }
     </style>
+    <script>
+        function validateForm() {
+            var pas = document.getElementById("contrasena").value;
+            var confirmarPas = document.getElementById("confirmarContrasena").value;
+            if (pas !== confirmarPas) {
+                alert("Las contraseÃ±as no coinciden.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Registro de Odontologo</h1>
 
         <% 
-            // Mostrar mensaje de éxito o error basado en el parámetro de la solicitud
+            // Mostrar mensaje de Ã©xito o error basado en el parÃ¡metro de la solicitud
             String successMessage = request.getParameter("success");
             String errorMessage = request.getParameter("error");
         %>
 
         <% if ("true".equals(successMessage)) { %>
             <div class="alert alert-success text-center">
-                <strong>¡Registro exitoso! El odontólogo se ha registrado correctamente.</strong>
+                <strong>Â¡Registro exitoso! El odontÃ³logo se ha registrado correctamente.</strong>
             </div>
         <% } else if ("true".equals(errorMessage)) { %>
             <div class="alert alert-danger text-center">
-                <strong>Error al registrar el odontólogo. Verifique los datos e intente nuevamente.</strong>
+                <strong>Error al registrar el odontÃ³logo. Verifique los datos e intente nuevamente.</strong>
             </div>
         <% } else if ("passwordMismatch".equals(request.getParameter("error"))) { %>
             <div class="alert alert-danger text-center">
-                <strong>Las contraseñas no coinciden. Por favor, inténtelo de nuevo.</strong>
+                <strong>Las contraseÃ±as no coinciden. Por favor, intÃ©ntelo de nuevo.</strong>
             </div>
         <% } else if ("missingId".equals(request.getParameter("error"))) { %>
             <div class="alert alert-danger text-center">
-                <strong>El ID es obligatorio. Por favor, ingréselo.</strong>
+                <strong>El ID es obligatorio. Por favor, ingrÃ©selo.</strong>
             </div>
         <% } %>
 
-        <form id="registroOdontologo" action="/CtrOdontologo" method="POST">
+        <form id="registroOdontologo" action="/proyectotumejor/CtrOdontologo" method="POST" onsubmit="return validateForm()">
+            <input type="hidden" name="accion" value="Registrar">
             <div class="form-section">
                 <h2>Datos del Odontologo</h2>
                 <div class="form-group">
@@ -63,23 +69,25 @@
                     <input type="text" class="form-control" id="usuario" name="usuario" required>
                 </div>
                 <div class="form-group">
-                    <label for="contrasena">Contraseña</label>
+                    <label for="contrasena">ContraseÃ±a</label>
                     <input type="password" class="form-control" id="contrasena" name="contrasena" required>
                 </div>
                 <div class="form-group">
-                    <label for="confirmarContrasena">Confirmar Contraseña</label>
+                    <label for="confirmarContrasena">Confirmar ContraseÃ±a</label>
                     <input type="password" class="form-control" id="confirmarContrasena" name="confirmarContrasena" required>
                 </div>
                 <div class="form-group">
                     <label for="tipo">Tipo</label>
                     <select class="form-control" id="tipo" name="tipo" required>
                         <option value="Administrador">Administrador</option>
-                        <!-- Otras opciones pueden ser añadidas aquí -->
+                        <!-- Otras opciones pueden ser aÃ±adidas aquÃ­ -->
                     </select>
                 </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Registrar</button>
-                </div>
+            <center>
+                        <input type="submit" name="accion" value="Registrar Paciente" class="btn btn-primary btn-block">
+                       
+                        
+                    </center> 
             </div>
         </form>
     </div>

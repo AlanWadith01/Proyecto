@@ -1,4 +1,3 @@
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
+            background-image: url('../imagenes/odontologia.jpg');
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
@@ -16,6 +16,7 @@
         }
 
         .header {
+            background-image: url('../mejor.jpg');
             background-color: #00aaff;
             color: white;
             padding: 15px 20px;
@@ -70,29 +71,30 @@
         }
 
         .button-row .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
+            background-color: #007bff;
+            border-color: #007bff;
         }
 
         .button-row .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
+            background-color: #007bff;
+            border-color: #007bff;
         }
 
         .button-row .btn-secondary:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
+            background-color: #007bff;
+            border-color: #007bff;
         }
 
         .button-row .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
+            background-color: #007bff;
+            border-color: #007bff;
         }
 
         .button-row .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
+            background-color: #007bff;
+            border-color: #007bff;
         }
+        
 
         .search-bar {
             margin-bottom: 30px;
@@ -185,15 +187,29 @@
 </head>
 <body>
     <header class="header">
-        <div class="title">Tu Mejor Sonrisa</div>
-        <a href="#" class="sign-out">Cerrar sesión</a>
-    </header>
+        <div class="title ">Tu Mejor Sonrisa</div>
+  <div class="col-1">
+    <ul class="nav nav-pills nav-fill">
+      <li class="nav-item dropdown">
+        <a class="nav-link active dropdown-toggle navbar-brand" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expandes="false"><i class="bi bi-list" style="font-size: 1.5rem;"></i></a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="/proyectotumejor/CtrPaciente?accion=listar" data-bs-target="#item"><i class="bi bi-person-lines-fill"></i> Pacientes</a></li>
+          <li><a class="dropdown-item" href="/proyectotumejor/CtrOdontologo?accion=Listar" data-bs-target="#item"><i class="bi bi-person-lines-fill"></i> Odontologos</a></li>
+          <li><a class="dropdown-item" href="#" data-bs-target="#item"><i class="bi bi-bookmark-star"></i> Tratamientos</a></li>
+          <li><a class="dropdown-item" href="#" data-bs-target="#item"><i class="bi bi-flag"></i> Reportes</a></li>
+        </ul>
+      </li>
+    </ul>
+    
+  </div>
+  <a href="#" class="sign-out">Cerrar sesión</a>
+</header>
 
     <div class="container">
         <div class="button-row">
-            <button class="btn btn-primary">Programar Cita</button>
-            <button class="btn btn-secondary">Programar Retratamiento</button>
-            <button class="btn btn-success">Generar Reportes</button>
+           <button class="btn btn-primary" onclick="window.location.href='/proyectotumejor/vistas/programarcita.jsp'">Programar Cita</button>
+            <button class="btn btn-secondary" onclick="window.location.href='/proyectotumejor/vistas/programarretra.jsp'">Programar Retratamiento</button>
+            <button class="btn btn-success" onclick="window.location.href='/proyectotumejor/vistas/Generarreporte.jsp'">Generar Reportes</button>
         </div>
 
         <div class="row mb-4">
@@ -211,35 +227,45 @@
             <table>
                 <thead>
                     <tr>
-                        <th colspan="7">CITAS</th>
+                        <th colspan="8">CITAS</th>
                     </tr>
                     <tr>
-                        <th>Tipo ID</th>
+                        
                         <th>Identificación</th>
                         <th>Nombre Paciente</th>
+                        <th>Apellido Paciente</th>
                         <th>Odontólogo</th>
                         <th>Fecha</th>
                         <th>Hora</th>
                         <th>Descripción de Cita</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- Aquí se debería incluir la lógica para iterar sobre las citas -->
-                    <tr>
-                        <td>CC</td>
-                        <td>12345678</td>
-                        <td>Juan Pérez</td>
-                        <td>Dr. García</td>
-                        <td>2024-09-01</td>
-                        <td>10:00</td>
-                        <td>Revisión general</td>
-                    </tr>
-                </tbody>
+                  <tbody>
+        <c:forEach var="cit" items="${citas}">  
+            <tr>
+                <th class="border">${cit.getId_pac()}</th>
+                <td class="border">${cit.getNombrepac()}</td>
+                <td class="border">${cit.getApellidopac()}</td>
+                <td class="border">${cit.getId_odon()}</td>
+                <td class="border">${cit.getFechacita()}</td>
+                <td class="border">${cit.getHoracita()}</td>
+                <td class=" border">${cit.getDescripcioncita()}</td>
+                
+
+                <td class=" text-center border">
+                    <input type="hidden" name="id" id="id" value="${cit.getId()}">
+                    <a class="btn btn-warning" href="/proyectotumejor/CtrPaciente?accion=editar&id=${pac.getId()}"><i class="bi bi-pencil-fill"></i></a>
+                    <a class="btn btn-danger" id="btndetalle" href="/proyectotumejor/vistas/detallePaciente.jsp"><i class="bi bi-trash-fill"></i></i></a>
+                </td>
+            </tr>
+        </c:forEach>
+    </tbody>
             </table>
         </div>
 
-        <div class="footer-buttons">
-            <button class="btn btn-info">Lista de Pacientes</button>
-            <button class="btn btn-warning">Registrar Paciente</button>
-        </div>
+       
+    </div>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
+    </html>
