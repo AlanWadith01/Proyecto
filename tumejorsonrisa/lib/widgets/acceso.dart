@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          primary: Colors.blue,
+          backgroundColor: Colors.blue,
           padding: EdgeInsets.all(padding),
         ),
         child: Center(
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildButton('Programar Retratamiento', () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Programarretratamiento()),
+                    MaterialPageRoute(builder: (context) => ProgramarretraPage()),
                   );
                 }, fontSize: 7, padding: 5),
                 SizedBox(width: 16),
@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fetchAppointments(searchController.text);
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
+                    backgroundColor: Colors.blue,
                   ),
                   child: Row(
                     children: [
