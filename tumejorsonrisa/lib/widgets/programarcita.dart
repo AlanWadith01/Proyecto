@@ -21,6 +21,7 @@ class _ProgramarcitaState extends State<Programarcita> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
+  // Método para seleccionar la fecha
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -35,6 +36,7 @@ class _ProgramarcitaState extends State<Programarcita> {
     }
   }
 
+  // Método para seleccionar la hora
   void _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -47,28 +49,37 @@ class _ProgramarcitaState extends State<Programarcita> {
     }
   }
 
-  Future<void> _autofillContactInfo(String documento) async {
-    try {
-      final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
-      if (response.statusCode == 200) {
-        final paciente = json.decode(response.body);
-        setState(() {
-          _nombreController.text = paciente['nombres'];
-          _apellidoController.text = paciente['apellidos'];
-          _telefonoController.text = paciente['telefono'];
-          _emailController.text = paciente['email'];
-        });
-      } else {
-        throw Exception('Error al cargar información del paciente');
-      }
-    } catch (e) {
-      print('Error al autocompletar: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar la información del paciente')),
-      );
-    }
-  }
+  // Método para autocompletar información del paciente
+ Future<void> _autofillContactInfo(String documento) async {
+  try {
+    final response = await http.get(Uri.parse('https://f43e-191-95-23-42.ngrok-free.app/patients/$documento'));
 
+    if (response.statusCode == 200) {
+      final paciente = json.decode(response.body);
+      setState(() {
+        _nombreController.text = paciente['nombre'] ?? ''; // Ajusta los nombres de los campos según tu respuesta JSON
+        _apellidoController.text = paciente['apellido'] ?? '';
+        _telefonoController.text = paciente['telefono'] ?? '';
+        _emailController.text = paciente['email'] ?? '';
+      });
+    } else if (response.statusCode == 404) {
+      // Paciente no encontrado
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Paciente no encontrado')),
+      );
+    } else {
+      throw Exception('Error al cargar información del paciente');
+    }
+  } catch (e) {
+    print('Error al autocompletar: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al cargar la información del paciente')),
+    );
+  }
+}
+
+
+  // Método para buscar la información del paciente
   void _searchPatient() {
     final documento = _documentoController.text;
     if (documento.isNotEmpty) {
@@ -76,10 +87,11 @@ class _ProgramarcitaState extends State<Programarcita> {
     }
   }
 
+  // Método para programar la cita
   Future<void> _programarCita() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final url = Uri.parse('http://<tu-servidor-rails.com>/api/appointments');
+        final url = Uri.parse('https://d1e5-181-78-21-163.ngrok-free.app/appointments'); // Cambia esta URL a la de tu servidor de Rails
         final response = await http.post(
           url,
           headers: <String, String>{
