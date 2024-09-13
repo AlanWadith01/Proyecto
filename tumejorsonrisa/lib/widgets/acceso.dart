@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://c121-191-95-19-112.ngrok-free.app/api/appointments?query=$query');
+    final url = Uri.parse('https://c121-191-95-19-112.ngrok-free.app/appointments?query=$query');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
