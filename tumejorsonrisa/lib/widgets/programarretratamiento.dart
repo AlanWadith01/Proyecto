@@ -53,7 +53,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
       _isLoading = true;
     });
     try {
-      final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients/$numero_documento'));
+      final response = await http.get(Uri.parse('https://3fbf-191-95-53-238.ngrok-free.app/patients/$numero_documento'));
       if (response.statusCode == 200) {
         final paciente = json.decode(response.body);
         setState(() {
@@ -106,7 +106,7 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://c121-191-95-19-112.ngrok-free.app/retratamientos'),
+          Uri.parse('https://3fbf-191-95-53-238.ngrok-free.app/retratamientos'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(retratamiento),
         );
@@ -143,6 +143,24 @@ class _ProgramarretraPageState extends State<ProgramarretraPage> {
       ),
       body: Stack(
         children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/fondo.jpg'), // Imagen de fondo
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade100.withOpacity(0.7), Colors.blue.shade50.withOpacity(0.7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            ),
           SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Form(

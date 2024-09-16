@@ -3,7 +3,6 @@ import 'package:tumejorsonrisa/widgets/acceso.dart';
 import 'package:tumejorsonrisa/widgets/authservice.dart';
 import 'package:tumejorsonrisa/widgets/recontra.dart';
 
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -13,7 +12,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthService _authService = AuthService('https://c121-191-95-19-112.ngrok-free.app/');
+  final AuthService _authService = AuthService('https://3fbf-191-95-53-238.ngrok-free.app/');
 
   bool _isLoading = false;
 
@@ -64,7 +63,13 @@ class _LoginPageState extends State<LoginPage> {
             colorBlendMode: BlendMode.darken,
           ),
           Container(
-            color: Colors.black.withOpacity(0.5),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade900.withOpacity(0.8), Colors.blue.shade100.withOpacity(0.6)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
           ),
           Center(
             child: SingleChildScrollView(
@@ -74,11 +79,11 @@ class _LoginPageState extends State<LoginPage> {
                 constraints: BoxConstraints(maxWidth: 500),
                 padding: EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 99, 209, 253).withOpacity(0.19),
+                  color: Colors.white.withOpacity(0.85),
                   borderRadius: BorderRadius.circular(12.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 8,
                       offset: Offset(0, 4),
@@ -97,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.blue.shade900,
                           ),
                         ),
                       ),
@@ -107,25 +112,25 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.blue.shade900,
                         ),
                       ),
                       TextFormField(
                         controller: _usernameController,
                         decoration: InputDecoration(
                           labelText: 'Ingrese su usuario',
-                          labelStyle: TextStyle(color: Colors.white),
+                          labelStyle: TextStyle(color: Colors.blue.shade900),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.blue.shade900),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.blue.shade900),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.blue.shade900),
                           ),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.blue.shade900),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor ingrese su usuario';
@@ -139,26 +144,26 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.blue.shade900,
                         ),
                       ),
                       TextFormField(
                         controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: 'Ingrese su contraseña',
-                          labelStyle: TextStyle(color: Colors.white),
+                          labelStyle: TextStyle(color: Colors.blue.shade900),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.blue.shade900),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.blue.shade900),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Colors.blue.shade900),
                           ),
                         ),
                         obscureText: true,
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.blue.shade900),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor ingrese su contraseña';
@@ -176,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                                   onPressed: _login,
                                   child: Text('Iniciar Sesión'),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black,
+                                    backgroundColor: Colors.blue.shade700,
                                     foregroundColor: Colors.white,
                                   ),
                                 ),
@@ -194,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                                     child: Text(
                                       '¿Ha olvidado su contraseña?',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Colors.blue.shade900,
                                         decoration: TextDecoration.underline,
                                       ),
                                       textAlign: TextAlign.center,

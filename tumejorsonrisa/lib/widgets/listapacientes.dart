@@ -26,16 +26,30 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
       errorMessage = '';
     });
     try {
-      final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients'));
+      final response = await http.get(Uri.parse('https://3fbf-191-95-53-238.ngrok-free.app/patients'));
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      
       if (response.statusCode == 200) {
-        setState(() {
+        try {
           pacientes = json.decode(response.body);
-          isLoading = false;
-        });
+          setState(() {
+            isLoading = false;
+          });
+        } catch (e) {
+          setState(() {
+            isLoading = false;
+            errorMessage = 'Error al procesar JSON: ${e.toString()}';
+          });
+        }
       } else {
-        throw Exception('Error al cargar pacientes');
+        setState(() {
+          isLoading = false;
+          errorMessage = 'Error al cargar pacientes: ${response.statusCode}';
+        });
       }
     } catch (e) {
+      print('Error: ${e.toString()}');
       setState(() {
         isLoading = false;
         errorMessage = 'Error al cargar pacientes: ${e.toString()}';
@@ -70,26 +84,38 @@ class _ListaPacientesPageState extends State<ListaPacientesPage> {
         backgroundColor: Colors.blue,
         elevation: 0,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade100, Colors.blue.shade50],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/fondo.jpg'), // Imagen de fondo
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.all(16.0),
-        child: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : errorMessage.isNotEmpty
-                ? Center(child: Text(errorMessage, style: TextStyle(color: Colors.red)))
-                : RefreshIndicator(
-                    onRefresh: _fetchPacientes,
-                    child: ListView.builder(
-                      itemCount: pacientes.length,
-                      itemBuilder: (context, index) => _buildPacienteCard(pacientes[index]),
-                    ),
-                  ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade100.withOpacity(0.7), Colors.blue.shade50.withOpacity(0.7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : errorMessage.isNotEmpty
+                    ? Center(child: Text(errorMessage, style: TextStyle(color: Colors.red)))
+                    : RefreshIndicator(
+                        onRefresh: _fetchPacientes,
+                        child: ListView.builder(
+                          itemCount: pacientes.length,
+                          itemBuilder: (context, index) => _buildPacienteCard(pacientes[index]),
+                        ),
+                      ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

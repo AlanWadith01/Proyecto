@@ -40,7 +40,7 @@ class _EditarPacientePageState extends State<EditarPacientePage> {
   Future<void> _actualizarPaciente() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final url = Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients/${widget.paciente['id']}');
+        final url = Uri.parse('https://3fbf-191-95-53-238.ngrok-free.app/${['numero_documento']}');
         final response = await http.put(
           url,
           headers: <String, String>{

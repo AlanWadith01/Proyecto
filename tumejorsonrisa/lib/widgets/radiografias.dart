@@ -19,7 +19,6 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _tipoController = TextEditingController();
   DateTime? _fechaRadiografia;
-  final _formKey = GlobalKey<FormState>(); 
 
   @override
   void initState() {
@@ -27,20 +26,21 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
     _fetchRadiografias(); 
   }
 
-  Future<void> _fetchRadiografias() async {
-    try {
-      final response = await http.get(Uri.parse('https://c121-191-95-19-112.ngrok-free.app/${widget.pacienteId}/radiografias'));
-      if (response.statusCode == 200) {
-        setState(() {
-          radiografias = json.decode(response.body);
-        });
-      } else {
-        throw Exception('Error al cargar radiografías');
-      }
-    } catch (e) {
-      _showMessage('Error al cargar radiografías: $e');
+Future<void> _fetchRadiografias() async {
+  try {
+    final response = await http.get(Uri.parse('https://3fbf-191-95-53-238.ngrok-free.app/pacientes/${widget.pacienteId}/radiografias'));
+    if (response.statusCode == 200) {
+      setState(() {
+        radiografias = json.decode(response.body);
+      });
+    } else {
+      throw Exception('Error al cargar radiografías');
     }
+  } catch (e) {
+    print('Error al cargar radiografías: $e');
   }
+}
+
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery); 
@@ -52,14 +52,14 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
   }
 
   Future<void> _addRadiografia() async {
-    if (!_formKey.currentState!.validate() || _selectedImage == null) {
-      _showMessage('Por favor, completa todos los campos y selecciona una imagen.');
+    if (_selectedImage == null) {
+      print('Por favor, selecciona una imagen.');
       return;
     }
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('https://c121-191-95-19-112.ngrok-free.app/patients/${widget.pacienteId}/radiografias'),
+      Uri.parse('https://3fbf-191-95-53-238.ngrok-free.app/${widget.pacienteId}/radiografias'),
     );
 
     request.fields['descripcion'] = _descripcionController.text;
@@ -73,13 +73,12 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
 
       if (response.statusCode == 201) {
         _fetchRadiografias(); 
-        _resetForm();
-        _showMessage('Radiografía agregada exitosamente.');
+        _resetForm(); 
       } else {
         throw Exception('Error al agregar la radiografía');
       }
     } catch (e) {
-      _showMessage('Error al agregar radiografía: $e');
+      print('Error al agregar radiografía: $e');
     }
   }
 
@@ -90,12 +89,6 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
       _tipoController.clear();
       _fechaRadiografia = null;
     });
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   @override
@@ -133,77 +126,51 @@ class _RadiografiasPageState extends State<RadiografiasPage> {
               ),
             SizedBox(height: 20),
             Text('Agregar Nueva Radiografía', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _descripcionController,
-                    decoration: InputDecoration(labelText: 'Descripción'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa una descripción';
-                      }
-                      return null;
-                    },
+            TextField(
+              controller: _descripcionController,
+              decoration: InputDecoration(labelText: 'Descripción'),
+            ),
+            TextField(
+              controller: _tipoController,
+              decoration: InputDecoration(labelText: 'Tipo de Radiografía'),
+            ),
+            GestureDetector(
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+                if (pickedDate != null) {
+                  setState(() {
+                    _fechaRadiografia = pickedDate;
+                  });
+                }
+              },
+              child: AbsorbPointer(
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Fecha de Radiografía',
+                    hintText: _fechaRadiografia != null ? _fechaRadiografia!.toLocal().toString().split(' ')[0] : 'Seleccionar fecha',
                   ),
-                  TextFormField(
-                    controller: _tipoController,
-                    decoration: InputDecoration(labelText: 'Tipo de Radiografía'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa el tipo de radiografía';
-                      }
-                      return null;
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                      );
-                      if (pickedDate != null) {
-                        setState(() {
-                          _fechaRadiografia = pickedDate;
-                        });
-                      }
-                    },
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Fecha de Radiografía',
-                          hintText: _fechaRadiografia != null ? _fechaRadiografia!.toLocal().toString().split(' ')[0] : 'Seleccionar fecha',
-                        ),
-                        validator: (value) {
-                          if (_fechaRadiografia == null) {
-                            return 'Por favor selecciona una fecha';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: Text('Seleccionar Imagen'),
-                  ),
-                  if (_selectedImage != null) 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Image.file(_selectedImage!, width: 200, height: 200, fit: BoxFit.cover),
-                    ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _addRadiografia,
-                    child: Text('Montar Radiografía'),
-                  ),
-                ],
+                ),
               ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _pickImage,
+              child: Text('Seleccionar Imagen'),
+            ),
+            if (_selectedImage != null) 
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Image.file(_selectedImage!, width: 200, height: 200, fit: BoxFit.cover),
+              ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _addRadiografia,
+              child: Text('Montar Radiografía'),
             ),
           ],
         ),
